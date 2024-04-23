@@ -4,6 +4,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import React from 'react';
 
 
+
 export default function AppHeader() {
     return(
             <Navbar expand="lg" className="bg-body-tertiary py-3">
@@ -12,14 +13,14 @@ export default function AppHeader() {
                 <img
             src={'images/logo.png'}
             alt="Logo"
-            width="100"
-            height="40"
+            width="120"
+            height="45"
             className="d-inline-block align-top"
           />
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
-                  <Nav className="me-auto">
+                  <Nav className="ms-auto">
                     <Nav.Link href="#home">Home</Nav.Link>
                     <Nav.Link href="#link">Entrar</Nav.Link>
                     <Nav.Link href="#link">Quem Somos</Nav.Link>
