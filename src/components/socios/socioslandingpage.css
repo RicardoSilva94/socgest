@@ -1,0 +1,132 @@
+/* Estilo para telas maiores */
+.socios-landing-page {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10%;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-bottom: 5%;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  min-height: 700px; /* Aumentar a altura mínima */
+}
+
+.left-content {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.right-content {
+  flex: 1;
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  margin-right: 2%;
+}
+
+.text-box {
+  background: linear-gradient(to right, #1f4d84d0, #6e6d6ed2);
+  color: #fff;
+  padding: 30px;
+  flex: 1;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.text-box:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+}
+
+.imagem-socios {
+  width: 100%;
+  height: auto;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  font-family: 'Montserrat', sans-serif;
+  color: #302f38;
+}
+
+h5 {
+  font-family: 'Montserrat', sans-serif;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+
+.text-box .info-button {
+  display: inline-block;
+  background: #6b6b6b;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  margin-top: 20px;
+  transition: background 0.3s ease;
+}
+
+.text-box .info-button:hover {
+  background: #1f4d84;
+}
+
+.right-content, .left-content {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.socios-landing-page.loaded .right-content,
+.socios-landing-page.loaded .left-content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.border-box {
+  border: 1px solid #1f4d84; /* Cor e espessura da borda */
+  padding: 15px; /* Espaço interno */
+  border-radius: 10px; /* Bordas arredondadas */
+  margin-top: 20px;
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.2); /* Fundo semi-transparente */
+}
+
+/* Media query para dispositivos móveis */
+@media (max-width: 768px) {
+  .socios-landing-page {
+    margin-top: 25%;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .left-content {
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+
+  .right-content {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .text-box {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+
+  .text-box .info-button {
+    padding: 10px 15px;
+    font-size: 1rem;
+  }
+}
+
