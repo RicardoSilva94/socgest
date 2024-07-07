@@ -3,20 +3,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 10%;
-  margin-left: 5%;
-  margin-right: 5%;
-  margin-bottom: 5%;
+  margin: 5%;
   background: #ffffff;
   padding: 20px;
   border-radius: 15px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  min-height: 700px; /* Aumentar a altura mínima */
+  min-height: 700px;
+  transition: all 0.5s ease;
+  margin-top: 7%;
 }
 
 .left-content {
   flex: 1;
   margin-right: 20px;
+  animation: fadeInLeft 1s ease;
 }
 
 .right-content {
@@ -24,14 +24,13 @@
   margin-left: 20px;
   display: flex;
   flex-direction: column;
-  margin-right: 2%;
+  animation: fadeInRight 1s ease;
 }
 
 .text-box {
   background: linear-gradient(to right, #1f4d84d0, #6e6d6ed2);
   color: #fff;
   padding: 30px;
-  flex: 1;
   border-radius: 15px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -45,13 +44,14 @@
 .imagem-socios {
   width: 100%;
   height: auto;
+  border-radius: 10px;
 }
 
 h1 {
   font-size: 2.5rem;
   margin-bottom: 20px;
   font-family: 'Montserrat', sans-serif;
-  color: #302f38;
+  color: #ffffff;
 }
 
 h5 {
@@ -61,7 +61,7 @@ h5 {
   color: #ffffff;
 }
 
-.text-box .info-button {
+.info-button {
   display: inline-block;
   background: #6b6b6b;
   color: #fff;
@@ -69,11 +69,12 @@ h5 {
   border-radius: 5px;
   text-decoration: none;
   margin-top: 20px;
-  transition: background 0.3s ease;
+  transition: background 0.3s ease, transform 0.3s ease;
 }
 
-.text-box .info-button:hover {
+.info-button:hover {
   background: #000000;
+  transform: translateY(-5px);
 }
 
 .right-content, .left-content {
@@ -89,12 +90,33 @@ h5 {
 }
 
 .border-box {
-  border: 1px solid #1f4d84; /* Cor e espessura da borda */
-  padding: 15px; /* Espaço interno */
-  border-radius: 10px; /* Bordas arredondadas */
-  margin-top: 20px;
-  margin-bottom: 20px;
-  background: rgba(255, 255, 255, 0.2); /* Fundo semi-transparente */
+  border: 1px solid #1f4d84; 
+  padding: 15px;
+  border-radius: 10px;
+  margin: 20px 0;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* Media query para dispositivos móveis */
@@ -124,7 +146,7 @@ h5 {
     margin-bottom: 20px;
   }
 
-  .text-box .info-button {
+  .info-button {
     padding: 10px 15px;
     font-size: 1rem;
   }

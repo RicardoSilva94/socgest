@@ -7,3 +7,48 @@
     font-weight: bold;
     margin: 0 10px;
   }
+
+.custom-form {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.custom-form .form-control {
+  border-radius: 5px;
+  border: 1px solid #ced4da;
+}
+
+.custom-form .form-label {
+  color: #495057;
+  font-weight: 600;
+}
+
+.custom-form .custom-button {
+  background-color: #1f4d84;
+  border: none;
+  border-radius: 5px;
+}
+
+.custom-form .custom-button:hover {
+  background-color: #16406a;
+}
+
+.custom-form .form-group {
+  margin-bottom: 15px;
+}
+
+.custom-form p {
+  margin-top: 15px;
+  color: #495057;
+}
+
+.custom-form p span {
+  font-weight: 600;
+  cursor: pointer;
+  color: #1f4d84;
+}
+
+.custom-form p span:hover {
+  color: #16406a;
+}
