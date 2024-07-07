@@ -1,6 +1,6 @@
 import React from 'react';
 import './footer.css';
-import { IoMdMail, IoMdCall } from 'react-icons/io'; // Importando os ícones corretos
+import { IoMdMail, IoMdCall } from 'react-icons/io'; 
 
 export default function Footer() {
   return (

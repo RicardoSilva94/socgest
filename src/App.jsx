@@ -3,6 +3,7 @@ import './App.css';
 import AppHeader from './components/header/header';
 import SociosLandingPage from './components/socios/socioslandingpage';
 import Footer from './components/footer/footer';
+import About from './components/about/about';
 
 
 
@@ -15,6 +16,7 @@ function App() {
       </header>
       <main>
       < SociosLandingPage />
+      < About />
       </main>
       <footer> <Footer /> </footer>
     </div>
