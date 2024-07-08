@@ -8,7 +8,7 @@
   padding: 20px;
   border-radius: 15px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  min-height: 700px;
+  min-height: 600px;
   transition: all 0.5s ease;
   margin-top: 7%;
 }
@@ -28,53 +28,32 @@
 }
 
 .text-box {
-  background: linear-gradient(to right, #1f4d84d0, #6e6d6ed2);
-  color: #fff;
+  background: #eee7e7;
+  color: #000;
   padding: 30px;
   border-radius: 15px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.text-box:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+.text-box p {
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.9;
+  margin-bottom: 20px;
+  font-size: 1.4rem;
+  font-style: oblique;
+}
+
+.text-box .highlight {
+  text-decoration-color: #1f4d84;
+  font-weight: bold;
+  color: #1f4d84;
 }
 
 .imagem-socios {
   width: 100%;
   height: auto;
   border-radius: 10px;
-}
-
-h1 {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-  font-family: 'Montserrat', sans-serif;
-  color: #ffffff;
-}
-
-h5 {
-  font-family: 'Montserrat', sans-serif;
-  line-height: 1.6;
-  margin-bottom: 20px;
-  color: #ffffff;
-}
-
-.info-button {
-  display: inline-block;
-  background: #6b6b6b;
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 5px;
-  text-decoration: none;
-  margin-top: 20px;
-  transition: background 0.3s ease, transform 0.3s ease;
-}
-
-.info-button:hover {
-  background: #000000;
-  transform: translateY(-5px);
 }
 
 .right-content, .left-content {
@@ -89,12 +68,20 @@ h5 {
   transform: translateY(0);
 }
 
-.border-box {
-  border: 1px solid #1f4d84; 
-  padding: 15px;
-  border-radius: 10px;
-  margin: 20px 0;
-  background: rgba(255, 255, 255, 0.2);
+.info-button {
+  display: inline-block;
+  background: #1f4d84;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  margin-top: 20px;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.info-button:hover {
+  background: #000000;
+  transform: translateY(-5px);
 }
 
 @keyframes fadeInLeft {
@@ -141,9 +128,8 @@ h5 {
     padding: 20px;
   }
 
-  h1 {
-    font-size: 2rem;
-    margin-bottom: 20px;
+  .text-box p {
+    font-size: 1rem;
   }
 
   .info-button {

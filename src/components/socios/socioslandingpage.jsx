@@ -16,18 +16,10 @@ export default function SociosLandingPage() {
       </div>
       <div className="right-content">
         <div className="text-box">
-          <h1>Gestão de Sócios</h1>
-          <div className="border-box">
-            <h5>
-              Faça toda a gestão da informação dos seus associados, no separador <strong>Gestão de Sócios</strong>
-            </h5>
-          </div>
-          <h1>Gestão de Quotas</h1>
-          <div className="border-box">
-            <h5>
-              Faça toda a gestão da informação de pagamentos e quotas, no separador <strong>Gestão de Quotas</strong>
-            </h5>
-          </div>
+          <p>
+            Com o SocGest poderá fazer toda a gestão da informação dos seus associados, no separador <span className="highlight">Gestão de Sócios</span>, 
+            bem como a gestão da informação de pagamentos e emissão de quotas, no separador <span className="highlight">Gestão de Quotas</span>.
+          </p>
           <a href="#gestao-de-socios" className="info-button">Começar a utilizar</a>
         </div>
       </div>
