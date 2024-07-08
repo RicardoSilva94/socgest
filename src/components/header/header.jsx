@@ -6,6 +6,11 @@ import './header.css';
 import LoginModal from './loginModal';
 import RegisterModal from './registerModal';
 
+export const handleScrollToTop = (event) => {
+  event.preventDefault();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
 export default function AppHeader() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -28,10 +33,6 @@ export default function AppHeader() {
     window.scrollTo({ top: y, behavior: 'smooth' });
   };
 
-  const handleScrollToTop = (event) => {
-    event.preventDefault();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
   return (
     <>

@@ -28,7 +28,7 @@ export default function SociosLandingPage() {
               Faça toda a gestão da informação de pagamentos e quotas, no separador <strong>Gestão de Quotas</strong>
             </h5>
           </div>
-          <a href="#gestao-de-socios" className="info-button">+Info</a>
+          <a href="#gestao-de-socios" className="info-button">Começar a utilizar</a>
         </div>
       </div>
     </div>

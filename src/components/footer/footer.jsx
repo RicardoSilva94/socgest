@@ -1,6 +1,7 @@
 import React from 'react';
 import './footer.css';
-import { IoMdMail, IoMdCall } from 'react-icons/io'; 
+import { IoMdMail, IoMdCall } from 'react-icons/io';
+import { handleScrollToTop } from '../header/header';
 
 export default function Footer() {
   return (
@@ -40,7 +41,7 @@ export default function Footer() {
         <h4>Navegação</h4>
         <nav className="footer-nav">
           <ul>
-            <li><a href="#home">Home</a></li>
+            <li><a href="#home"onClick={handleScrollToTop}>Home</a></li>
             <li><a href="#socios">Sócios</a></li>
             <li><a href="#quotas">Quotas</a></li>
             <li><a href="#about">Quem Somos</a></li>
