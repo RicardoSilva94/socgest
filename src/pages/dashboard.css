@@ -1,0 +1,34 @@
+.dashboard {
+    display: flex;
+    margin-top: 87px; /* Adjust this based on the height of the AppHeader */
+  }
+  
+  .main-content {
+    flex: 1;
+    margin-left: 240px; /* Adjust based on sidebar width */
+    padding: 20px;
+  }
+  
+  .content {
+    padding: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .dashboard {
+      margin-top: 56px; /* Ensure content starts below the AppHeader */
+    }
+  
+    .main-content {
+      margin-left: 0;
+    }
+  
+    .sidebar {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease-in-out;
+    }
+  
+    .sidebar.show {
+      transform: translateX(0);
+    }
+  }
+  

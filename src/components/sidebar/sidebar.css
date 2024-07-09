@@ -1,0 +1,76 @@
+.sidebar {
+    width: 240px;
+    position: fixed;
+    top: 87px; /* Adjust based on the height of the AppHeader */
+    left: 0;
+    height: calc(100% - 87px); /* Adjust based on the height of the AppHeader */
+    background-color: #1f4d84;
+    border-right: 1px solid #ddd;
+    padding-top: 20px;
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ensures the profile section is at the bottom */
+  }
+  
+  .sidebar .nav-title {
+    color: #1f4d84;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    background-color: #ffffff; /* Background color */
+    padding: 10px 15px; /* Padding for spacing */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow effect */
+    display: flex;
+    justify-content: center; /* Center align text horizontally */
+    align-items: center; /* Center align text vertically */
+    width: 90%; /* Adjust width to fit within sidebar */
+    margin: 0 auto 20px auto; /* Center horizontally with auto margin */
+  }
+  
+  .sidebar .nav-link {
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+  }
+  
+  .sidebar .nav-link:hover {
+    background-color: #e9ecef;
+    color: #1f4d84;
+  }
+  
+  .sidebar .nav-icon {
+    margin-right: 10px; /* Adjust the spacing as needed */
+  }
+  
+  .profile-section {
+    margin-bottom: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .sidebar {
+      transform: translateX(-100%);
+    }
+  
+    .sidebar.show {
+      transform: translateX(0);
+    }
+  
+    .toggle-button {
+      display: block;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1100;
+      background-color: #1f4d84;
+      color: #ffffff;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+  }
+  
