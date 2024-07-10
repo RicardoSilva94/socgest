@@ -18,7 +18,7 @@ const Sidebar = () => {
       <div className={`sidebar ${isOpen ? 'show' : 'hidden'}`}>
         <Nav defaultActiveKey="/dashboard" className="flex-column">
           <div className="nav-title">Barra de Navegação</div>
-          <Nav.Link href="/gestao-socios">
+          <Nav.Link href="/socios">
             <FaUsers className="nav-icon" /> Gestão de Sócios
           </Nav.Link>
           <Nav.Link href="/gestao-quotas">

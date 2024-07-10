@@ -1,0 +1,153 @@
+import React, { useMemo, useState } from 'react';
+import { useTable, usePagination } from 'react-table';
+import { Button, Table } from 'react-bootstrap';
+import { FaEye, FaEdit, FaTrash } from 'react-icons/fa';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './socios.css';
+
+const Socios = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const data = useMemo(
+    () => [
+      { id: 1, nome: 'João Silva Farinha', numSocio: '001', email: 'joao.silva@example.com' },
+      { id: 2, nome: 'Maria Oliveira Roque', numSocio: '002', email: 'maria.oliveira@example.com' },
+      { id: 3, nome: 'Carlos Sousa', numSocio: '003', email: 'carlos.sousa@example.com' },
+      { id: 4, nome: 'Ana Santos', numSocio: '004', email: 'ana.santos@example.com' },
+      { id: 5, nome: 'Rui Pereira Silva', numSocio: '005', email: 'rui.pereira@example.com' },
+      { id: 6, nome: 'Marta Costa', numSocio: '006', email: 'marta.costa@example.com' },
+      { id: 7, nome: 'Pedro Rodrigues Jorge Febra', numSocio: '007', email: 'pedro.rodrigues@example.com' },
+      { id: 8, nome: 'Sofia Fernandes', numSocio: '008', email: 'sofia.fernandes@example.com' },
+      { id: 9, nome: 'José Almeida', numSocio: '009', email: 'jose.almeida@example.com' },
+      { id: 10, nome: 'Inês Ribeiro', numSocio: '010', email: 'ines.ribeiro@example.com' },
+      { id: 11, nome: 'Miguel Lopes', numSocio: '011', email: 'miguel.lopes@example.com' },
+      { id: 12, nome: 'Carolina Pereira', numSocio: '012', email: 'carolina.pereira@example.com' },
+      { id: 13, nome: 'António Silva', numSocio: '013', email: 'antonio.silva@example.com' },
+      { id: 14, nome: 'Diana Costa', numSocio: '014', email: 'diana.costa@example.com' },
+      { id: 15, nome: 'Ricardo Almeida', numSocio: '015', email: 'ricardo.almeida@example.com' },
+      { id: 16, nome: 'Mariana Ribeiro Gomes', numSocio: '016', email: 'mariana.ribeiro@example.com' },
+      { id: 17, nome: 'Hugo Lopes', numSocio: '017', email: 'hugo.lopes@example.com' },
+      { id: 18, nome: 'Sara Pereira', numSocio: '018', email: 'sara.pereira@example.com' },
+      { id: 19, nome: 'Vasco Silva', numSocio: '019', email: 'vasco.silva@example.com' },
+      { id: 20, nome: 'Pedro Rodrigues', numSocio: '020', email: 'teresa.costa@example.com' }
+    ],
+    []
+  );
+
+  const filteredData = useMemo(() => {
+    return Array.isArray(data) ? data.filter(socio => 
+      socio.nome.toLowerCase().includes(searchTerm.toLowerCase())
+    ) : [];
+  }, [data, searchTerm]);
+
+  const columns = useMemo(
+    () => [
+      { Header: 'Nome', accessor: 'nome', className: 'col-nome' },
+      { Header: 'Nº Sócio', accessor: 'numSocio', className: 'col-numSocio' },
+      { Header: 'Email', accessor: 'email', className: 'col-email' },
+      {
+        Header: 'Gerir Sócio',
+        accessor: 'actions',
+        Cell: ({ row }) => (
+          <div className="action-buttons">
+            <Button variant="success" size="sm" className="mr-2" onClick={() => handleView(row)}>
+              <FaEye /> Mais Informação
+            </Button>
+            <Button variant="info" size="sm" className="mr-2" onClick={() => handleEdit(row)}>
+              <FaEdit />
+            </Button>
+            <Button variant="danger" size="sm" onClick={() => handleDelete(row.id)}>
+              <FaTrash />
+            </Button>
+          </div>
+        ),
+        className: 'col-actions'
+      }
+    ],
+    []
+  );
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    page,
+    nextPage,
+    previousPage,
+    canNextPage,
+    canPreviousPage,
+    prepareRow,
+    state: { pageIndex, pageSize }
+  } = useTable(
+    {
+      columns,
+      data: filteredData,
+      initialState: { pageIndex: 0, pageSize: 10 }
+    },
+    usePagination
+  );
+
+  const handleView = (row) => {
+    console.log('Ver mais detalhes do sócio', row.original);
+  };
+
+  const handleEdit = (row) => {
+    console.log('Editar sócio', row.original);
+  };
+
+  const handleDelete = (id) => {
+    console.log('Eliminar sócio', id);
+  };
+
+  return (
+    <div>
+    <div className="d-flex justify-content-between align-items-center mb-2 mt-1">
+      <button className="btn btn-primary">Adicionar Sócio</button>
+      <input
+        type="text"
+        placeholder="Pesquisar por nome"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="form-control w-25"
+      />
+    </div>
+      <Table {...getTableProps()} striped bordered hover>
+        <thead>
+          {headerGroups.map(headerGroup => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map(column => (
+                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {page.map((row, i) => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()}>
+                {row.cells.map(cell => {
+                  return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </Table>
+      <div className="d-flex justify-content-between align-items-center mt-3">
+        <div>
+          <Button className="btnPrevious" onClick={() => previousPage()} disabled={!canPreviousPage}>
+            Página Anterior
+          </Button>
+          <Button onClick={() => nextPage()} disabled={!canNextPage}>
+            Próxima página
+          </Button>
+        </div>
+        <div className="result-count ml-auto">
+          {filteredData.length} resultados encontrados
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Socios;
