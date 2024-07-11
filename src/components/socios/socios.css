@@ -28,4 +28,17 @@
   .btnPrevious {
     margin-right: 20px; 
   }
+  .btn-custom {
+    background-color:  #1f4d84; 
+    color: #ffffff;
+  }
+  
+  .btn-custom:hover {
+    background-color: #6f939c; 
+  }
+  .form-control {
+    border-color: #1f4d84;
+  }
+  
+  
   

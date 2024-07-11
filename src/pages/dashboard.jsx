@@ -14,7 +14,7 @@ const Dashboard = () => {
           <Container fluid>
             <div className="content">
               <h2>Welcome to the Dashboard</h2>
-              {/* Add your dashboard content here */}
+              {/* Aqui quero ter o nome da Associação, número total de sócios, o valor que está por receber em quotas, o valor recebido em quotas.*/}
             </div>
           </Container>
         </div>
@@ -24,3 +24,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+ 

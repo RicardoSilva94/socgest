@@ -1,12 +1,17 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useTable, usePagination } from 'react-table';
-import { Button, Table } from 'react-bootstrap';
-import { FaEye, FaEdit, FaTrash } from 'react-icons/fa';
+import { Button, Table, OverlayTrigger, Tooltip, Modal } from 'react-bootstrap';
+import { FaEye, FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './socios.css';
 
+
 const Socios = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+
   const data = useMemo(
     () => [
       { id: 1, nome: 'João Silva Farinha', numSocio: '001', email: 'joao.silva@example.com' },
@@ -33,34 +38,33 @@ const Socios = () => {
     []
   );
 
-  const filteredData = useMemo(() => {
-    return Array.isArray(data) ? data.filter(socio => 
-      socio.nome.toLowerCase().includes(searchTerm.toLowerCase())
-    ) : [];
-  }, [data, searchTerm]);
-
   const columns = useMemo(
     () => [
-      { Header: 'Nome', accessor: 'nome', className: 'col-nome' },
-      { Header: 'Nº Sócio', accessor: 'numSocio', className: 'col-numSocio' },
-      { Header: 'Email', accessor: 'email', className: 'col-email' },
+      { Header: 'Nome', accessor: 'nome' },
+      { Header: 'Nº Sócio', accessor: 'numSocio' },
+      { Header: 'Email', accessor: 'email' },
       {
         Header: 'Gerir Sócio',
         accessor: 'actions',
         Cell: ({ row }) => (
           <div className="action-buttons">
-            <Button variant="success" size="sm" className="mr-2" onClick={() => handleView(row)}>
-              <FaEye /> Mais Informação
-            </Button>
-            <Button variant="info" size="sm" className="mr-2" onClick={() => handleEdit(row)}>
-              <FaEdit />
-            </Button>
-            <Button variant="danger" size="sm" onClick={() => handleDelete(row.id)}>
-              <FaTrash />
-            </Button>
+            <OverlayTrigger overlay={<Tooltip id={`tooltip-view`}>Mais Informação</Tooltip>}>
+              <Button variant="success" size="sm" className="mr-2" onClick={() => handleView(row)}>
+                <FaEye />
+              </Button>
+            </OverlayTrigger>
+            <OverlayTrigger overlay={<Tooltip id={`tooltip-edit`}>Editar</Tooltip>}>
+              <Button variant="info" size="sm" className="mr-2" onClick={() => handleEdit(row)}>
+                <FaEdit />
+              </Button>
+            </OverlayTrigger>
+            <OverlayTrigger overlay={<Tooltip id={`tooltip-delete`}>Eliminar</Tooltip>}>
+              <Button variant="danger" size="sm" onClick={() => handleShowDeleteModal(row.original.id)}>
+                <FaTrash />
+              </Button>
+            </OverlayTrigger>
           </div>
-        ),
-        className: 'col-actions'
+        )
       }
     ],
     []
@@ -86,6 +90,13 @@ const Socios = () => {
     usePagination
   );
 
+  useEffect(() => {
+    const results = data.filter(socio =>
+      socio.nome.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredData(results);
+  }, [searchTerm, data]);
+
   const handleView = (row) => {
     console.log('Ver mais detalhes do sócio', row.original);
   };
@@ -94,22 +105,36 @@ const Socios = () => {
     console.log('Editar sócio', row.original);
   };
 
+  const handleShowDeleteModal = (id) => {
+    setDeleteId(id);
+    setShowDeleteModal(true);
+  };
+
   const handleDelete = (id) => {
-    console.log('Eliminar sócio', id);
+    console.log('Excluir sócio com o id:', id);
+    setShowDeleteModal(false);
+    // Lógica para excluir o sócio
   };
 
   return (
     <div>
-    <div className="d-flex justify-content-between align-items-center mb-2 mt-1">
-      <button className="btn btn-primary">Adicionar Sócio</button>
-      <input
-        type="text"
-        placeholder="Pesquisar por nome"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="form-control w-25"
-      />
-    </div>
+      <div className="d-flex justify-content-between align-items-center mb-2 mt-1">
+        <button className="btn btn-custom">
+          <FaPlus className="mr-2" /> Adicionar Sócio
+        </button>
+        <div className="d-flex align-items-center">
+          <label className="mr-2 me-2">Pesquisar:</label>
+          <div className="input-group">
+            <input
+              type="text"
+              placeholder="Pesquisar por nome"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="form-control search-input"
+            />
+          </div>
+        </div>
+      </div>
       <Table {...getTableProps()} striped bordered hover>
         <thead>
           {headerGroups.map(headerGroup => (
@@ -135,7 +160,8 @@ const Socios = () => {
       </Table>
       <div className="d-flex justify-content-between align-items-center mt-3">
         <div>
-          <Button className="btnPrevious" onClick={() => previousPage()} disabled={!canPreviousPage}>
+          <Button style={{ marginRight: '10px' }}
+          onClick={() => previousPage()} disabled={!canPreviousPage}>
             Página Anterior
           </Button>
           <Button onClick={() => nextPage()} disabled={!canNextPage}>
@@ -146,6 +172,27 @@ const Socios = () => {
           {filteredData.length} resultados encontrados
         </div>
       </div>
+
+
+
+
+      {/* Modal de confirmação para exclusão */}
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar exclusão</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Tem a certeza que deseja eliminar este sócio?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            Cancelar
+          </Button>
+          <Button variant="danger" onClick={() => handleDelete(deleteId)}>
+            Eliminar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

@@ -6,6 +6,7 @@ import Home from  '../src/pages/home'
 import Dashboard from '../src/pages/dashboard'
 import GestaoSocios from '../src/pages/gestaoSocios';
 
+
 function App() {
   return (
     <Router>

@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import './header.css';
 import LoginModal from './loginModal';
 import RegisterModal from './registerModal';
+import { Link, useHistory } from 'react-router-dom';
 
 // Função para fazer scroll suave até o topo da página
 export const handleScrollToTop = (event) => {
@@ -14,6 +15,14 @@ export const handleScrollToTop = (event) => {
 
 
 export default function AppHeader() {
+  const history = useHistory();
+
+  const handleNavigateHome = (event) => {
+    history.push('/');
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
   // Estado para controlar a exibição do modal de login
   const [showLoginModal, setShowLoginModal] = useState(false);
   // Estado para controlar a exibição do modal de registo
@@ -48,8 +57,9 @@ export default function AppHeader() {
       {/* Navbar fixada no topo da página */}
       <Navbar expand="lg" className="bg-body-tertiary py-3" style={{ position: 'fixed', top: 0, width: '100%', zIndex: 1000 }}>
         <Container>
+
           {/* Link para a home com função para scroll suave ao topo */}
-          <Navbar.Brand href="#home" onClick={handleScrollToTop}>
+           <Link to="/" className="navbar-brand" onClick={handleNavigateHome}>
             <img
               src={'images/logo.png'} 
               alt="Logo"
@@ -57,12 +67,15 @@ export default function AppHeader() {
               height="45"
               className="d-inline-block align-top"
             />
-          </Navbar.Brand>
+            </Link>
+
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
-              <Nav.Link href="#home" onClick={handleScrollToTop}>Home</Nav.Link> 
-              <Nav.Link href="#socios">Sócios</Nav.Link> 
+            <Nav.Item>
+                <Link to="/" className="nav-link" onClick={handleNavigateHome}>Home</Link>
+              </Nav.Item> 
+              <Nav.Link href="/socios">Sócios</Nav.Link> 
               <Nav.Link href="#quotas">Quotas</Nav.Link> 
               <Nav.Link href="#about" onClick={(e) => handleScrollToSection(e, 'about')}>Quem Somos</Nav.Link> 
               <Nav.Link href="#contactos" onClick={(e) => handleScrollToSection(e, 'contactos')}>Contactos</Nav.Link>

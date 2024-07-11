@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './sidebar.css';
 import Nav from 'react-bootstrap/Nav';
-import { FaUsers, FaCoins, FaBars, FaUser } from 'react-icons/fa';
+import { FaUsers, FaCoins, FaUser } from 'react-icons/fa';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
