@@ -1,0 +1,26 @@
+.btn-custom {
+    background-color: #1f4d84;
+    color: white;
+    border: none;
+  }
+  
+  .custom-form {
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+  }
+  
+  .search-input {
+    border-radius: 0.25rem;
+  }
+  
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .result-count {
+    font-size: 0.9rem;
+    color: #6c757d;
+  }
+  

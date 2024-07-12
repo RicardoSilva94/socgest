@@ -42,8 +42,8 @@ export default function Footer() {
         <nav className="footer-nav">
           <ul>
             <li><a href="#home"onClick={handleScrollToTop}>Home</a></li>
-            <li><a href="#socios">Sócios</a></li>
-            <li><a href="#quotas">Quotas</a></li>
+            <li><a href="/socios">Sócios</a></li>
+            <li><a href="/quotas">Quotas</a></li>
             <li><a href="#about">Quem Somos</a></li>
           </ul>
         </nav>

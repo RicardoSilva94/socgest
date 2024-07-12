@@ -76,7 +76,7 @@ export default function AppHeader() {
                 <Link to="/" className="nav-link" onClick={handleNavigateHome}>Home</Link>
               </Nav.Item> 
               <Nav.Link href="/socios">Sócios</Nav.Link> 
-              <Nav.Link href="#quotas">Quotas</Nav.Link> 
+              <Nav.Link href="/quotas">Quotas</Nav.Link> 
               <Nav.Link href="#about" onClick={(e) => handleScrollToSection(e, 'about')}>Quem Somos</Nav.Link> 
               <Nav.Link href="#contactos" onClick={(e) => handleScrollToSection(e, 'contactos')}>Contactos</Nav.Link>
               <Nav.Link onClick={handleShowLogin} style={{ borderRadius: '5px', color: 'white', backgroundColor: '#1f4d84', cursor: 'pointer' }}>Entrar</Nav.Link> 
@@ -87,7 +87,7 @@ export default function AppHeader() {
 
       {/* Modal de Login */}
       <LoginModal show={showLoginModal} handleClose={handleCloseLogin} handleShowRegister={handleShowRegister} />
-      {/* Modal de Registoo */}
+      {/* Modal de Registo */}
       <RegisterModal show={showRegisterModal} handleClose={handleCloseRegister} />
     </>
   );

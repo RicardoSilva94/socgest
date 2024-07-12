@@ -21,7 +21,7 @@ const Sidebar = () => {
           <Nav.Link href="/socios">
             <FaUsers className="nav-icon" /> Gestão de Sócios
           </Nav.Link>
-          <Nav.Link href="/gestao-quotas">
+          <Nav.Link href="/quotas">
             <FaCoins className="nav-icon" /> Gestão de Quotas
           </Nav.Link>
         </Nav>
