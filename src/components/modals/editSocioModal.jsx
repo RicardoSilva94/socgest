@@ -103,7 +103,7 @@ const EditSocioModal = ({ show, handleClose, handleEditSocio, socio }) => {
             <Form.Label><FaMapMarkerAlt className="icon" /> Morada</Form.Label>
             <Form.Control
               as="textarea"
-              rows={3}
+              rows={2}
               placeholder="Morada"
               value={morada}
               onChange={(e) => setMorada(e.target.value)}

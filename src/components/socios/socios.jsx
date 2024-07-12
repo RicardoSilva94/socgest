@@ -6,6 +6,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './socios.css';
 import AddSocioModal from '../modals/addSocioModal';
 import EditSocioModal from '../modals/editSocioModal';
+import ViewSocioModal from '../modals/viewSocioModal';
+
 
 const Socios = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -14,6 +16,7 @@ const Socios = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [showAddSocioModal, setShowAddSocioModal] = useState(false);
   const [showEditSocioModal, setShowEditSocioModal] = useState(false);
+  const [showViewSocioModal, setShowViewSocioModal] = useState(false);
   const [selectedSocio, setSelectedSocio] = useState(null);
 
   const handleCloseAddSocioModal = () => setShowAddSocioModal(false);
@@ -24,9 +27,14 @@ const Socios = () => {
     setShowEditSocioModal(true);
   };
 
+  const handleShowViewSocioModal = (socio) => {
+    setSelectedSocio(socio);
+    setShowViewSocioModal(true);
+  };
+
   const data = useMemo(
     () => [
-      { id: 1, nome: 'João Silva Farinha', numSocio: '001', email: 'joao.silva@example.com' },
+      { id: 1, nome: 'João Silva Farinha', numSocio: '001', email: 'joao.silva@example.com', nif: '123456789', telemovel: '913345589', morada: 'Rua do Sol, nº 123', notas: 'Sócio ativo fundador'},
       { id: 2, nome: 'Maria Oliveira Roque', numSocio: '002', email: 'maria.oliveira@example.com' },
       { id: 3, nome: 'Carlos Sousa', numSocio: '003', email: 'carlos.sousa@example.com' },
       { id: 4, nome: 'Ana Santos', numSocio: '004', email: 'ana.santos@example.com' },
@@ -61,7 +69,7 @@ const Socios = () => {
         Cell: ({ row }) => (
           <div className="action-buttons">
             <OverlayTrigger overlay={<Tooltip id={`tooltip-view`}>Mais Informação</Tooltip>}>
-              <Button variant="success" size="sm" className="mr-2" onClick={() => handleView(row)}>
+              <Button variant="success" size="sm" className="mr-2" onClick={() => handleShowViewSocioModal(row.original)}>
                 <FaEye />
               </Button>
             </OverlayTrigger>
@@ -207,6 +215,14 @@ const Socios = () => {
           show={showEditSocioModal}
           handleClose={handleCloseEditSocioModal}
           handleEditSocio={handleEditSocio}
+          socio={selectedSocio}
+        />
+      )}
+
+      {selectedSocio && (
+        <ViewSocioModal
+          show={showViewSocioModal}
+          handleClose={() => setShowViewSocioModal(false)}
           socio={selectedSocio}
         />
       )}
