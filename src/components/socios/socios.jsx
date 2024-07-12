@@ -4,6 +4,7 @@ import { Button, Table, OverlayTrigger, Tooltip, Modal } from 'react-bootstrap';
 import { FaEye, FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './socios.css';
+import AddSocioModal from '../modals/addSocioModal';
 
 
 const Socios = () => {
@@ -11,6 +12,9 @@ const Socios = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const [showAddSocioModal, setShowAddSocioModal] = useState(false);
+  const handleCloseAddSocioModal = () => setShowAddSocioModal(false);
+  const handleShowAddSocioModal = () => setShowAddSocioModal(true);
 
   const data = useMemo(
     () => [
@@ -116,10 +120,15 @@ const Socios = () => {
     // Lógica para excluir o sócio
   };
 
+  const handleAddSocio = () => {
+    // Implemente a lógica para adicionar o sócio aqui
+    console.log('Adicionar novo sócio');
+  };
+
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-2 mt-1">
-        <button className="btn btn-custom">
+        <button className="btn btn-custom" onClick={handleShowAddSocioModal}>
           <FaPlus className="mr-2" /> Adicionar Sócio
         </button>
         <div className="d-flex align-items-center">
@@ -173,7 +182,11 @@ const Socios = () => {
         </div>
       </div>
 
-
+      <AddSocioModal
+        show={showAddSocioModal}
+        handleClose={handleCloseAddSocioModal}
+        handleAddSocio={handleAddSocio}
+      />
 
 
       {/* Modal de confirmação para exclusão */}
