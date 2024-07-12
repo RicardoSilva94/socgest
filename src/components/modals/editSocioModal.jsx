@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+// components/modals/EditSocioModal.jsx
+
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import { FaUser, FaIdCard, FaPhone, FaEnvelope, FaMapMarkerAlt, FaStickyNote } from 'react-icons/fa';
 
-const AddSocioModal = ({ show, handleClose, handleAddSocio }) => {
+const EditSocioModal = ({ show, handleClose, handleEditSocio, socio }) => {
   const [nome, setNome] = useState('');
   const [numSocio, setNumSocio] = useState('');
   const [nif, setNif] = useState('');
@@ -10,6 +12,18 @@ const AddSocioModal = ({ show, handleClose, handleAddSocio }) => {
   const [email, setEmail] = useState('');
   const [morada, setMorada] = useState('');
   const [notas, setNotas] = useState('');
+
+  useEffect(() => {
+    if (socio) {
+      setNome(socio.nome);
+      setNumSocio(socio.numSocio);
+      setNif(socio.nif);
+      setTelemovel(socio.telemovel);
+      setEmail(socio.email);
+      setMorada(socio.morada);
+      setNotas(socio.notas);
+    }
+  }, [socio]);
 
   const resetForm = () => {
     setNome('');
@@ -24,7 +38,7 @@ const AddSocioModal = ({ show, handleClose, handleAddSocio }) => {
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Adicionar Novo Sócio</Modal.Title>
+        <Modal.Title>Editar Sócio</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
@@ -115,7 +129,8 @@ const AddSocioModal = ({ show, handleClose, handleAddSocio }) => {
           Cancelar
         </Button>
         <Button variant="primary" onClick={() => {
-          handleAddSocio({
+          handleEditSocio({
+            id: socio.id,
             nome,
             numSocio,
             nif,
@@ -134,4 +149,4 @@ const AddSocioModal = ({ show, handleClose, handleAddSocio }) => {
   );
 };
 
-export default AddSocioModal;
+export default EditSocioModal;

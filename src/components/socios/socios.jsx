@@ -5,7 +5,7 @@ import { FaEye, FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './socios.css';
 import AddSocioModal from '../modals/addSocioModal';
-
+import EditSocioModal from '../modals/editSocioModal';
 
 const Socios = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -13,8 +13,16 @@ const Socios = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [showAddSocioModal, setShowAddSocioModal] = useState(false);
+  const [showEditSocioModal, setShowEditSocioModal] = useState(false);
+  const [selectedSocio, setSelectedSocio] = useState(null);
+
   const handleCloseAddSocioModal = () => setShowAddSocioModal(false);
+  const handleCloseEditSocioModal = () => setShowEditSocioModal(false);
   const handleShowAddSocioModal = () => setShowAddSocioModal(true);
+  const handleShowEditSocioModal = (socio) => {
+    setSelectedSocio(socio);
+    setShowEditSocioModal(true);
+  };
 
   const data = useMemo(
     () => [
@@ -58,7 +66,7 @@ const Socios = () => {
               </Button>
             </OverlayTrigger>
             <OverlayTrigger overlay={<Tooltip id={`tooltip-edit`}>Editar</Tooltip>}>
-              <Button variant="info" size="sm" className="mr-2" onClick={() => handleEdit(row)}>
+              <Button variant="info" size="sm" className="mr-2" onClick={() => handleShowEditSocioModal(row.original)}>
                 <FaEdit />
               </Button>
             </OverlayTrigger>
@@ -105,8 +113,9 @@ const Socios = () => {
     console.log('Ver mais detalhes do sócio', row.original);
   };
 
-  const handleEdit = (row) => {
-    console.log('Editar sócio', row.original);
+  const handleEdit = (socio) => {
+    console.log('Editar sócio', socio);
+    handleShowEditSocioModal(socio);
   };
 
   const handleShowDeleteModal = (id) => {
@@ -120,9 +129,14 @@ const Socios = () => {
     // Lógica para excluir o sócio
   };
 
-  const handleAddSocio = () => {
+  const handleAddSocio = (novoSocio) => {
     // Implemente a lógica para adicionar o sócio aqui
-    console.log('Adicionar novo sócio');
+    console.log('Adicionar novo sócio', novoSocio);
+  };
+
+  const handleEditSocio = (socioEditado) => {
+    // Implemente a lógica para editar o sócio aqui
+    console.log('Editar sócio', socioEditado);
   };
 
   return (
@@ -188,6 +202,14 @@ const Socios = () => {
         handleAddSocio={handleAddSocio}
       />
 
+      {selectedSocio && (
+        <EditSocioModal
+          show={showEditSocioModal}
+          handleClose={handleCloseEditSocioModal}
+          handleEditSocio={handleEditSocio}
+          socio={selectedSocio}
+        />
+      )}
 
       {/* Modal de confirmação para exclusão */}
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
