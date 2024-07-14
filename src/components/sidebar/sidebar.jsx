@@ -26,7 +26,7 @@ const Sidebar = () => {
           </Nav.Link>
         </Nav>
         <Nav className="flex-column profile-section">
-          <Nav.Link href="/gerir-perfil">
+          <Nav.Link href="/perfil">
             <FaUser className="nav-icon" /> Gerir Perfil
           </Nav.Link>
         </Nav>

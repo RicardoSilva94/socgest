@@ -2,24 +2,24 @@ import React from 'react';
 import AppHeader from '../components/header/header';
 import Sidebar from '../components/sidebar/sidebar';
 import { Container } from 'react-bootstrap';
-import './gestaoQuotas.css';
-import Quotas from '../components/quotas/quotas';
+import './perfil.css';
+import PerfilUser from '../components/perfilUser/perfilUser';
 
-const GestaoQuotas = () => {
+const Perfil = () => {
 
     return (
-        <div className="gestao-quotas">
+        <div className="perfil">
           <AppHeader />
-          <div className="gestao-quotas-content">
+          <div className="perfil-content">
             <Sidebar />
             <div className="main-content">
               <Container fluid>
-                <Quotas />
+                <PerfilUser />
               </Container>
             </div>
           </div>
         </div>
       );
-    };
+    }
 
-export default GestaoQuotas;
+export default Perfil;

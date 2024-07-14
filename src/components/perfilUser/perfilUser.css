@@ -1,0 +1,48 @@
+.perfil-container {
+    margin-top: 50px;
+  }
+  
+  .card-header {
+    background-color: #1f4d84;
+    color: white;
+  }
+  
+  .card-body {
+    padding: 2rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-control {
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  .input-group-text {
+    background-color: #e9ecef;
+  }
+  
+  .btn-primary {
+    background-color: #1f4d84;
+    border: none;
+  }
+  
+  .btn-primary:hover {
+    background-color: #163c66;
+  }
+  
+  .btn-danger {
+    background-color: #d9534f;
+    border: none;
+  }
+  
+  .btn-danger:hover {
+    background-color: #c9302c;
+  }
+  
+  hr {
+    margin: 2rem 0;
+  }
+  

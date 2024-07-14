@@ -28,6 +28,11 @@ export default function RegisterModal({ show, handleClose }) {
             <Form.Control type="password" placeholder="Introduza a Password" />
           </Form.Group>
 
+          <Form.Group controlId="formConfirmPassword">
+            <Form.Label>Confirmar Password</Form.Label>
+            <Form.Control type="password" placeholder="Confirme a Password" />
+          </Form.Group>
+
           <Button variant="primary" type="submit" className="mt-3 custom-button">
             Registar
           </Button>
