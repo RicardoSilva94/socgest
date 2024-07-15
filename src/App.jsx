@@ -7,6 +7,7 @@ import Dashboard from '../src/pages/dashboard'
 import GestaoSocios from '../src/pages/gestaoSocios';
 import GestaoQuotas from './pages/gestaoQuotas';
 import Perfil from './pages/perfil';
+import GestaoEntidade from './pages/gestaoEntidade';
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/socios" component={GestaoSocios} />
           <Route path="/quotas" component={GestaoQuotas} />
+          <Route path="/entidade" component={GestaoEntidade} />
           <Route path="/perfil" component={Perfil} />
         </Switch>
       </div>

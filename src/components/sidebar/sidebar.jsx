@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './sidebar.css';
 import Nav from 'react-bootstrap/Nav';
-import { FaUsers, FaCoins, FaUser } from 'react-icons/fa';
+import { FaUsers, FaCoins, FaUser, FaBell, FaBuilding, FaSignOutAlt } from 'react-icons/fa';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,10 +24,19 @@ const Sidebar = () => {
           <Nav.Link href="/quotas">
             <FaCoins className="nav-icon" /> Gestão de Quotas
           </Nav.Link>
+          <Nav.Link href="/notificacoes">
+            <FaBell className="nav-icon" /> Notificações
+          </Nav.Link>
+          <Nav.Link href="/entidade">
+            <FaBuilding className="nav-icon" /> Gestão da Entidade
+          </Nav.Link>
         </Nav>
         <Nav className="flex-column profile-section">
           <Nav.Link href="/perfil">
             <FaUser className="nav-icon" /> Gerir Perfil
+          </Nav.Link>
+          <Nav.Link href="/logout">
+            <FaSignOutAlt className="nav-icon" /> Terminar Sessão
           </Nav.Link>
         </Nav>
       </div>

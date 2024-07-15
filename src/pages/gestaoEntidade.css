@@ -1,0 +1,17 @@
+.gestao-quotas-content {
+    display: flex;
+    margin-top: 66px; /* Adjust this based on the height of the AppHeader */
+  }
+  
+  .main-content {
+    margin-left: 240px; /* Adjust based on the width of the sidebar */
+    padding: 20px;
+    width: calc(100% - 240px); /* Adjust based on the width of the sidebar */
+  }
+  
+  @media (max-width: 768px) {
+    .main-content {
+      margin-left: 0;
+      width: 100%;
+    }
+  }
