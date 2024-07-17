@@ -1,0 +1,29 @@
+.custom-card {
+    background-color: #1f4d84; /* Fundo azul */
+    color: #ffffff; /* Letras brancas */
+    height: 100px; /* Altura fixa */
+    padding: 10px; /* Padding para reduzir o espaçamento interno */
+    margin: 1rem auto; /* Margem para centralizar e espaçamento */
+    border-radius: 8px; /* Raio da borda */
+    display: flex; /* Para centralizar o conteúdo */
+    align-items: center; /* Alinhamento vertical */
+    justify-content: center; /* Alinhamento horizontal */
+  }
+  
+  .custom-card-title {
+    font-size: 1.25rem; /* Tamanho do título */
+    font-weight: bold; /* Negrito no título */
+  }
+  
+  .custom-card-text {
+    font-size: 1rem; /* Tamanho do texto */
+  }
+  
+  .search-bar {
+    width: 60%; /* Define a largura da barra de pesquisa */
+  }
+  
+  .status-filter {
+    width: 35%; /* Define a largura da barra de seleção de status */
+  }
+  

@@ -7,6 +7,8 @@ import './quotas.css';
 import GenerateQuotaModal from '../modals/generateQuotaModal';
 import DeleteQuotaModal from '../modals/deleteQuotaModal';
 import ConfirmPaymentModal from '../modals/confirmPaymentModal';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 
 const Quotas = () => {
@@ -24,20 +26,20 @@ const Quotas = () => {
 
   const data = useMemo(
     () => [
-      { id: 1, socio: 'João Silva', descricao: 'Quota Anual 2024', periodo: '2024', estado: 'Não Pago', valor: '50€' },
-      { id: 2, socio: 'Maria Oliveira', descricao: 'Quota Mensal Julho 2024', periodo: 'Julho 2024', estado: 'Pago', valor: '5€' },
-      { id: 3, socio: 'Carlos Santos', descricao: 'Quota Anual 2024', periodo: '2024', estado: 'Não Pago', valor: '50€' },
-        { id: 4, socio: 'Marta Costa', descricao: 'Quota Mensal Julho 2024', periodo: 'Julho 2024', estado: 'Pago', valor: '5€' },
-        { id: 5, socio: 'Ana Rodrigues', descricao: 'Quota Anual 2024', periodo: '2024', estado: 'Não Pago', valor: '50€' },
-        { id: 6, socio: 'José Pereira', descricao: 'Quota Mensal Julho 2024', periodo: 'Julho 2024', estado: 'Pago', valor: '5€' },
-        { id: 7, socio: 'Rita Gomes', descricao: 'Quota Anual 2024', periodo: '2024', estado: 'Não Pago', valor: '50€' },
-        { id: 8, socio: 'Pedro Almeida', descricao: 'Quota Mensal Julho 2024', periodo: 'Julho 2024', estado: 'Pago', valor: '5€' },
-        { id: 9, socio: 'Inês Lopes', descricao: 'Quota Anual 2024', periodo: '2024', estado: 'Não Pago', valor: '50€' },
-        { id: 10, socio: 'Miguel Ferreira', descricao: 'Quota Mensal Julho 2024', periodo: 'Julho 2024', estado: 'Pago', valor: '5€' },
-        { id: 11, socio: 'Sara Costa', descricao: 'Quota Anual 2024', periodo: '2024', estado: 'Não Pago', valor: '50€' },
-        { id: 12, socio: 'Vasco Santos', descricao: 'Quota Mensal Julho 2024', periodo: 'Julho 2024', estado: 'Pago', valor: '5€' },
-        { id: 13, socio: 'Catarina Silva', descricao: 'Quota Anual 2024', periodo: '2024', estado: 'Não Pago', valor: '50€' },
-        { id: 14, socio: 'Ricardo Oliveira', descricao: 'Quota Mensal Julho 2024', periodo: 'Julho 2024', estado: 'Pago', valor: '5€' },
+      { id: 1, socio: 'João Silva', descricao: 'Quota Anual 2024', periodo: '2024', prazoPagamento: new Date('2024-12-31'), estado: 'Não Pago', valor: '50€' },
+      { id: 2, socio: 'Maria Oliveira', descricao: 'Quota Mensal Julho 2024', periodo: 'Julho 2024', prazoPagamento: new Date('2024-07-31'), estado: 'Pago', valor: '5€' },
+      { id: 3, socio: 'Carlos Santos', descricao: 'Quota Anual 2024', periodo: '2024', prazoPagamento: new Date('2024-12-31'), estado: 'Não Pago', valor: '50€' },
+      { id: 4, socio: 'Marta Costa', descricao: 'Quota Mensal Julho 2024', periodo: 'Julho 2024', prazoPagamento: new Date('2024-07-31'), estado: 'Pago', valor: '5€' },
+      { id: 5, socio: 'Ana Rodrigues', descricao: 'Quota Anual 2024', periodo: '2024', prazoPagamento: new Date('2024-12-31'), estado: 'Não Pago', valor: '50€' },
+      { id: 6, socio: 'José Pereira', descricao: 'Quota Mensal Julho 2024', periodo: 'Julho 2024', prazoPagamento: new Date('2024-07-31'), estado: 'Pago', valor: '5€' },
+      { id: 7, socio: 'Rita Gomes', descricao: 'Quota Anual 2024', periodo: '2024', prazoPagamento: new Date('2024-12-31'), estado: 'Não Pago', valor: '50€' },
+      { id: 8, socio: 'Pedro Almeida', descricao: 'Quota Mensal Julho 2024', periodo: 'Julho 2024', prazoPagamento: new Date('2024-07-31'), estado: 'Pago', valor: '5€' },
+      { id: 9, socio: 'Inês Lopes', descricao: 'Quota Anual 2024', periodo: '2024', prazoPagamento: new Date('2024-12-31'), estado: 'Não Pago', valor: '50€' },
+      { id: 10, socio: 'Miguel Ferreira', descricao: 'Quota Mensal Julho 2024', periodo: 'Julho 2024', prazoPagamento: new Date('2024-07-31'), estado: 'Pago', valor: '5€' },
+      { id: 11, socio: 'Sara Costa', descricao: 'Quota Anual 2024', periodo: '2024', prazoPagamento: new Date('2024-12-31'), estado: 'Não Pago', valor: '50€' },
+      { id: 12, socio: 'Vasco Santos', descricao: 'Quota Mensal Julho 2024', periodo: 'Julho 2024', prazoPagamento: new Date('2024-07-31'), estado: 'Pago', valor: '5€' },
+      { id: 13, socio: 'Catarina Silva', descricao: 'Quota Anual 2024', periodo: '2024', prazoPagamento: new Date('2024-12-31'), estado: 'Não Pago', valor: '50€' },
+      { id: 14, socio: 'Ricardo Oliveira', descricao: 'Quota Mensal Julho 2024', periodo: 'Julho 2024', prazoPagamento: new Date('2024-07-31'), estado: 'Pago', valor: '5€' },
     ],
     []
   );
@@ -48,6 +50,8 @@ const Quotas = () => {
       { Header: 'Sócio', accessor: 'socio' },
       { Header: 'Descrição', accessor: 'descricao' },
       { Header: 'Período', accessor: 'periodo' },
+      { Header: 'Prazo de Pagamento', accessor: 'prazoPagamento', 
+        Cell: ({ value }) => value.toLocaleDateString('pt-PT') },
       { Header: 'Estado', accessor: 'estado', 
         Cell: ({ value }) => (
             <div className="quota-state">
@@ -78,7 +82,8 @@ const Quotas = () => {
             </OverlayTrigger>
           </div>
         )
-      }
+      },
+      
     ],
     []
   );

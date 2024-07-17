@@ -8,6 +8,7 @@ import GestaoSocios from '../src/pages/gestaoSocios';
 import GestaoQuotas from './pages/gestaoQuotas';
 import Perfil from './pages/perfil';
 import GestaoEntidade from './pages/gestaoEntidade';
+import Notificacoes from './pages/notificacoes';
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Route path="/quotas" component={GestaoQuotas} />
           <Route path="/entidade" component={GestaoEntidade} />
           <Route path="/perfil" component={Perfil} />
+          <Route path="/notificacoes" component={Notificacoes} />
         </Switch>
       </div>
     </Router>

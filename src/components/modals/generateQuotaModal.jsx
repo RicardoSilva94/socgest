@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form, InputGroup } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { FaList, FaCalendarAlt, FaEuroSign, FaPen } from 'react-icons/fa'; // Verifique esta linha
+import { FaList, FaCalendarAlt, FaEuroSign, FaPen } from 'react-icons/fa';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
 
 const GenerateQuotaModal = ({ show, handleClose, handleGenerateQuota }) => {
   const [quotaData, setQuotaData] = useState({
     tipo: 'Anual',
     periodo: '',
     valor: '',
-    descricao: ''
+    descricao: '',
+    prazoPagamento: new Date()
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setQuotaData(prevState => ({ ...prevState, [name]: value }));
+  };
+
+  const handleDateChange = (date) => {
+    setQuotaData(prevState => ({ ...prevState, prazoPagamento: date }));
   };
 
   const handleSubmit = () => {
@@ -30,9 +38,7 @@ const GenerateQuotaModal = ({ show, handleClose, handleGenerateQuota }) => {
           <Form.Group controlId="formTipo">
             <Form.Label>Tipo</Form.Label>
             <InputGroup>
-              <InputGroup.Text>
-                <InputGroup.Text><FaList /></InputGroup.Text>
-              </InputGroup.Text>
+              <InputGroup.Text><FaList /></InputGroup.Text>
               <Form.Control as="select" name="tipo" value={quotaData.tipo} onChange={handleChange}>
                 <option value="Anual">Anual</option>
                 <option value="Mensal">Mensal</option>
@@ -42,9 +48,7 @@ const GenerateQuotaModal = ({ show, handleClose, handleGenerateQuota }) => {
           <Form.Group controlId="formPeriodo">
             <Form.Label>Período</Form.Label>
             <InputGroup>
-              <InputGroup.Text>
-                <InputGroup.Text><FaCalendarAlt /></InputGroup.Text>
-              </InputGroup.Text>
+              <InputGroup.Text><FaCalendarAlt /></InputGroup.Text>
               <Form.Control
                 type="text"
                 placeholder={quotaData.tipo === 'Anual' ? 'Ano (e.g., 2024)' : 'Mês (e.g., Julho 2024)'}
@@ -57,9 +61,7 @@ const GenerateQuotaModal = ({ show, handleClose, handleGenerateQuota }) => {
           <Form.Group controlId="formValor">
             <Form.Label>Valor</Form.Label>
             <InputGroup>
-              <InputGroup.Text>
-                <InputGroup.Text><FaEuroSign /></InputGroup.Text>
-              </InputGroup.Text>
+              <InputGroup.Text><FaEuroSign /></InputGroup.Text>
               <Form.Control
                 type="text"
                 placeholder="Valor da quota"
@@ -72,15 +74,25 @@ const GenerateQuotaModal = ({ show, handleClose, handleGenerateQuota }) => {
           <Form.Group controlId="formDescricao">
             <Form.Label>Descrição</Form.Label>
             <InputGroup>
-              <InputGroup.Text>
-                <InputGroup.Text><FaPen /></InputGroup.Text>
-              </InputGroup.Text>
+              <InputGroup.Text><FaPen /></InputGroup.Text>
               <Form.Control
                 type="text"
                 placeholder="Descrição da quota"
                 name="descricao"
                 value={quotaData.descricao}
                 onChange={handleChange}
+              />
+            </InputGroup>
+          </Form.Group>
+          <Form.Group controlId="formPrazoPagamento">
+            <Form.Label>Prazo de Pagamento</Form.Label>
+            <InputGroup>
+              <InputGroup.Text><FaCalendarAlt /></InputGroup.Text>
+              <DatePicker
+                selected={quotaData.prazoPagamento}
+                onChange={handleDateChange}
+                dateFormat="dd/MM/yyyy"
+                className="form-control"
               />
             </InputGroup>
           </Form.Group>
