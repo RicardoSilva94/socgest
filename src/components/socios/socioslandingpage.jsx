@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import socios from '../../assets/images/laptop_soc.png';
+import socios from '../../assets/images/laptopSoc.png';
 import './socioslandingpage.css';
 
 export default function SociosLandingPage() {
