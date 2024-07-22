@@ -13,8 +13,22 @@ const Dashboard = () => {
         <div className="main-content">
           <Container fluid>
             <div className="content">
-              <h2>Welcome to the Dashboard</h2>
-              {/* Aqui quero ter o nome da Associação, número total de sócios, o valor que está por receber em quotas, o valor recebido em quotas.*/}
+              <h2>Bem Vindo ao Dashboard de Gestão da sua Associação</h2>
+              <div className="info-section">
+                <p>Veja o video abaixo para aprender como utilizar o SocGest da melhor forma. </p>
+              </div>
+              {/* Incorporar o vídeo do YouTube */}
+              <div className="video-container">
+                <iframe
+                  width="560"
+                  height="315"
+                  src="https://www.youtube.com/embed/HbMK0pu3O9k?si=rKedj4KjGmk9m0Xc"
+                  title="Tutorial sobre o website"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
             </div>
           </Container>
         </div>
@@ -24,4 +38,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
- 

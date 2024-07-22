@@ -23,4 +23,36 @@
     font-size: 0.9rem;
     color: #6c757d;
   }
+
+.custom-dropdown {
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+}
+
+.dropdown-title {
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.custom-dropdown-toggle {
+  background: none;
+  border: none;
+  padding: 0;
+  color: black;
+}
+.custom-dropdown-toggle:hover {
+  color: #1f4d84;
+}
+
+.estado-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+
+
+  
   

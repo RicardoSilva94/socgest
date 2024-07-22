@@ -8,11 +8,41 @@ export default function Footer() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [submissionStatus, setSubmissionStatus] = useState('');
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const newErrors = {};
+    if (!name) {
+      newErrors.name = 'Nome é obrigatório!';
+    } else if (name.length < 3) {
+      newErrors.name = 'Nome deve ter pelo menos 3 caracteres!';
+    }
+
+    if (!email) {
+      newErrors.email = 'Email é obrigatório!';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = 'Email inválido';
+    }
+
+    if (!message) {
+      newErrors.message = 'Mensagem é obrigatória!';
+    } else if (message.length < 10) {
+      newErrors.message = 'Mensagem deve ter pelo menos 10 caracteres!';
+    }
+
+    return newErrors;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Configurar e enviar o e-mail com EmailJS
+    const formErrors = validate();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
+    // Enviar dados para o EmailJS
     emailjs.send('service_i89ghpt', 'template_fobr9yx', {
       from_name: name,
       from_email: email,
@@ -23,6 +53,7 @@ export default function Footer() {
       setName('');
       setEmail('');
       setMessage('');
+      setErrors({});
     }, (error) => {
       setSubmissionStatus('Ocorreu um erro. Tente novamente.');
     });
@@ -45,7 +76,7 @@ export default function Footer() {
       </div>
       <div className="footer-section">
         <h4>Envie-nos uma Mensagem</h4>
-        <form className="contact-form" onSubmit={handleSubmit}>
+        <form className="contact-form" onSubmit={handleSubmit} noValidate>
           <div className="form-group">
             <label htmlFor="name">Nome:</label>
             <input
@@ -54,8 +85,8 @@ export default function Footer() {
               name="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              required
             />
+            {errors.name && <p className="error-message">{errors.name}</p>}
           </div>
           <div className="form-group">
             <label htmlFor="email">Email:</label>
@@ -65,8 +96,8 @@ export default function Footer() {
               name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
             />
+            {errors.email && <p className="error-message">{errors.email}</p>}
           </div>
           <div className="form-group">
             <label htmlFor="message">Mensagem:</label>
@@ -75,8 +106,8 @@ export default function Footer() {
               name="message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              required
             ></textarea>
+            {errors.message && <p className="error-message">{errors.message}</p>}
           </div>
           <button type="submit" className="submit-button">Enviar</button>
           {submissionStatus && <p className="submission-status">{submissionStatus}</p>}

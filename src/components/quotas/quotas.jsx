@@ -1,15 +1,13 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useTable, usePagination } from 'react-table';
-import { Button, Table, OverlayTrigger, Tooltip, Modal } from 'react-bootstrap';
-import { FaCheckCircle, FaTimes, FaTrash, FaPlus, FaCheck } from 'react-icons/fa';
+import { Button, Table, OverlayTrigger, Tooltip, Dropdown } from 'react-bootstrap';
+import { FaCheckCircle, FaTimes, FaTrash, FaPlus, FaCheck} from 'react-icons/fa';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './quotas.css';
 import GenerateQuotaModal from '../modals/generateQuotaModal';
 import DeleteQuotaModal from '../modals/deleteQuotaModal';
 import ConfirmPaymentModal from '../modals/confirmPaymentModal';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-
 
 const Quotas = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,7 +17,7 @@ const Quotas = () => {
   const [showGenerateQuotaModal, setShowGenerateQuotaModal] = useState(false);
   const [showConfirmPaymentModal, setShowConfirmPaymentModal] = useState(false);
   const [selectedQuotaId, setSelectedQuotaId] = useState(0);
-  const [selectedQuota, setSelectedQuota] = useState(null);
+  const [paymentStatus, setPaymentStatus] = useState('');
 
   const handleCloseGenerateQuotaModal = () => setShowGenerateQuotaModal(false);
   const handleShowGenerateQuotaModal = () => setShowGenerateQuotaModal(true);
@@ -52,17 +50,34 @@ const Quotas = () => {
       { Header: 'Período', accessor: 'periodo' },
       { Header: 'Prazo de Pagamento', accessor: 'prazoPagamento', 
         Cell: ({ value }) => value.toLocaleDateString('pt-PT') },
-      { Header: 'Estado', accessor: 'estado', 
+      { 
+        Header: () => (
+          <div className="d-flex align-items-center estado-header">
+            <span className="dropdown-title">Estado</span>
+            <Dropdown onSelect={(eventKey) => setPaymentStatus(eventKey)} className="custom-dropdown">
+              <Dropdown.Toggle variant="link" id="dropdown-basic" className="custom-dropdown-toggle">
+
+              </Dropdown.Toggle>
+              <Dropdown.Menu className="custom-dropdown-menu">
+                <Dropdown.Item eventKey="">Todos</Dropdown.Item>
+                <Dropdown.Item eventKey="Pago">Pago</Dropdown.Item>
+                <Dropdown.Item eventKey="Não Pago">Não Pago</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
+        ),
+        accessor: 'estado',
         Cell: ({ value }) => (
-            <div className="quota-state">
-                {value === 'Pago' ? (
-                <FaCheckCircle className="text-success me-1" />
-                ) : (
-                <FaTimes className="text-danger me-1" />
-                )}
-                <span>{value}</span>
-            </div>
-            )
+          <div className="quota-state">
+            {value === 'Pago' ? (
+              <FaCheckCircle className="text-success me-1" />
+            ) : (
+              <FaTimes className="text-danger me-1" />
+            )}
+            <span>{value}</span>
+          </div>
+        ),
+        className: 'estado-header'
       },
       { Header: 'Valor', accessor: 'valor' },
       {
@@ -83,7 +98,6 @@ const Quotas = () => {
           </div>
         )
       },
-      
     ],
     []
   );
@@ -98,7 +112,6 @@ const Quotas = () => {
     canNextPage,
     canPreviousPage,
     prepareRow,
-    state: { pageIndex, pageSize }
   } = useTable(
     {
       columns,
@@ -110,10 +123,11 @@ const Quotas = () => {
 
   useEffect(() => {
     const results = data.filter(quota =>
+      (paymentStatus === '' || quota.estado === paymentStatus) &&
       quota.socio.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredData(results);
-  }, [searchTerm, data]);
+  }, [searchTerm, data, paymentStatus]);
 
   const handleShowDeleteModal = (id) => {
     setDeleteId(id);
@@ -136,6 +150,7 @@ const Quotas = () => {
     setSelectedQuotaId(id);
     setShowConfirmPaymentModal(true);
   };
+
   const handleCloseConfirmPaymentModal = () => setShowConfirmPaymentModal(false);
 
   const handleConfirmPayment = (id) => {
@@ -199,12 +214,12 @@ const Quotas = () => {
         </div>
       </div>
 
-        <ConfirmPaymentModal
-            show={showConfirmPaymentModal}
-            handleClose={handleCloseConfirmPaymentModal}
-            handleConfirmPayment={handleConfirmPayment}
-            quotaId={selectedQuotaId}
-        />
+      <ConfirmPaymentModal
+        show={showConfirmPaymentModal}
+        handleClose={handleCloseConfirmPaymentModal}
+        handleConfirmPayment={handleConfirmPayment}
+        quotaId={selectedQuotaId}
+      />
 
       <GenerateQuotaModal
         show={showGenerateQuotaModal}
@@ -216,11 +231,8 @@ const Quotas = () => {
         show={showDeleteModal}
         handleClose={() => setShowDeleteModal(false)}
         handleDelete={() => handleDelete(deleteId)}
-
       />
     </div>
-
-
   );
 };
 

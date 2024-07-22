@@ -8,6 +8,8 @@ const PerfilUser = () => {
   const [username, setUsername] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handleUsernameChange = (e) => {
@@ -22,9 +24,18 @@ const PerfilUser = () => {
     setNewPassword(e.target.value);
   };
 
-  const handleDeleteAccount = () => {
-    setShowDeleteModal(false);
-    // TODO: Implement account deletion logic
+  const handleConfirmPasswordChange = (e) => {
+    setConfirmPassword(e.target.value);
+  };
+
+  const validatePassword = () => {
+    if (newPassword.length < 6) {
+      return 'A password deve ter pelo menos 6 caracteres';
+    }
+    if (newPassword !== confirmPassword) {
+      return 'As passwords não coincidem';
+    }
+    return '';
   };
 
   const handleSubmitUsername = (e) => {
@@ -34,7 +45,17 @@ const PerfilUser = () => {
 
   const handleSubmitPassword = (e) => {
     e.preventDefault();
+    const error = validatePassword();
+    if (error) {
+      setPasswordError(error);
+      return;
+    }
     // TODO: Implement password update logic
+  };
+
+  const handleDeleteAccount = () => {
+    setShowDeleteModal(false);
+    // TODO: Implement account deletion logic
   };
 
   return (
@@ -65,7 +86,7 @@ const PerfilUser = () => {
               <hr />
               <Form onSubmit={handleSubmitPassword}>
                 <Form.Group controlId="formCurrentPassword">
-                <Form.Label><strong>Alterar Password</strong></Form.Label>
+                  <Form.Label><strong>Alterar Password</strong></Form.Label>
                   <Form.Control
                     type="password"
                     placeholder="Introduza a sua password atual"
@@ -75,7 +96,7 @@ const PerfilUser = () => {
                 </Form.Group>
 
                 <Form.Group controlId="formNewPassword">
-                <Form.Label><strong>Nova Password</strong></Form.Label>
+                  <Form.Label><strong>Nova Password</strong></Form.Label>
                   <Form.Control
                     type="password"
                     placeholder="Introduza a sua nova password"
@@ -83,6 +104,18 @@ const PerfilUser = () => {
                     onChange={handleNewPasswordChange}
                   />
                 </Form.Group>
+
+                <Form.Group controlId="formConfirmPassword">
+                  <Form.Label><strong>Confirmar Nova Password</strong></Form.Label>
+                  <Form.Control
+                    type="password"
+                    placeholder="Confirme a sua nova password"
+                    value={confirmPassword}
+                    onChange={handleConfirmPasswordChange}
+                  />
+                </Form.Group>
+                
+                {passwordError && <p className="text-danger">{passwordError}</p>}
 
                 <div className="text-center">
                   <Button variant="primary" type="submit" className="mt-3">
@@ -100,22 +133,22 @@ const PerfilUser = () => {
         </Col>
       </Row>
 
-        <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
-            <Modal.Header closeButton>
-                <Modal.Title>Eliminar Conta</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <p>Tem a certeza que deseja eliminar a sua conta?</p>
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-                Cancelar
-                </Button>
-                <Button variant="danger" onClick={handleDeleteAccount}>
-                Eliminar Conta
-                </Button>
-            </Modal.Footer>
-        </Modal>
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Eliminar Conta</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Tem a certeza que deseja eliminar a sua conta?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            Cancelar
+          </Button>
+          <Button variant="danger" onClick={handleDeleteAccount}>
+            Eliminar Conta
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };
