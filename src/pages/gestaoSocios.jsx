@@ -1,5 +1,3 @@
-// src/pages/GestaoSocios.jsx
-
 import React from 'react';
 import AppHeader from '../components/header/header';
 import Sidebar from '../components/sidebar/sidebar';

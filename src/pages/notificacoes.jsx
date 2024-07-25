@@ -3,7 +3,7 @@ import AppHeader from '../components/header/header';
 import Sidebar from '../components/sidebar/sidebar';
 import { Container } from 'react-bootstrap';
 import './notificacoes.css';
-import GestaoNotificacoes from '../gestaoNotificacoes/gestaoNotificacoes';
+import GestaoNotificacoes from '../components/gestaoNotificacoes/gestaoNotificacoes';
 
 const Notificacoes = () => {
 

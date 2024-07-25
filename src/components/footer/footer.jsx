@@ -34,11 +34,11 @@ export default function Footer() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Previne o comportamento padrão do formulário (recarregar a página)
 
-    const formErrors = validate();
-    if (Object.keys(formErrors).length > 0) {
-      setErrors(formErrors);
+    const formErrors = validate(); // Valida os campos do formulário
+    if (Object.keys(formErrors).length > 0) {   //Retorna um array contendo todas as chaves (propriedades) do objeto formErrors.
+      setErrors(formErrors); // Define os erros no estado se houver algum
       return;
     }
 

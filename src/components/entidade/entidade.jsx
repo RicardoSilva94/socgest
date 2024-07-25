@@ -16,9 +16,10 @@ const Entidade = () => {
     imagem: null
   });
 
-  const [isEditable, setIsEditable] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [isEditable, setIsEditable] = useState(false); // Estado para controlar se os campos são editáveis
+  const [showModal, setShowModal] = useState(false); // Estado para controlar a exibição do modal
 
+  // Função para lidar com mudanças nos campos de formulário
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === 'imagem') {
@@ -34,6 +35,7 @@ const Entidade = () => {
     setIsEditable(false); // Após submeter, desativa o modo de edição
   };
 
+  // Função para renderizar um campo de formulário com rótulo e ícone
   const renderField = (label, icon, value, name, type = "text") => (
     <Form.Group className="mb-3 d-flex align-items-center" controlId={`form${name}`}>
       <Form.Label className="me-2 mb-0" style={{ whiteSpace: 'nowrap' }}>
@@ -60,6 +62,7 @@ const Entidade = () => {
     </Form.Group>
   );
 
+  // Função para renderizar a pré-visualização da imagem
   const renderImagePreview = () => (
     <div className="text-center mb-3">
       {entidadeData.imagem ? (

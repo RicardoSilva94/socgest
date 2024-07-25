@@ -2,7 +2,7 @@
 
 .footer {
   display: flex;
-  justify-content: space-between; /* Alterado para distribuir as seções horizontalmente */
+  justify-content: space-between;
   align-items: flex-start; /* Alinhar os itens no topo */
   background-color: #1f4d84;
   color: white;
@@ -30,11 +30,11 @@
 
 .contact-icon {
   margin-right: 10px;
-  font-size: 1.5em; /* Ajustar tamanho dos ícones */
+  font-size: 1.5em; 
 }
 
 .contact-info p {
-  margin: 0; /* Remover margem padrão dos parágrafos */
+  margin: 0; 
 }
 
 .contact-form {
@@ -46,7 +46,7 @@
 .form-group {
   margin-bottom: 10px;
   width: 100%;
-  max-width: 400px; /* Limitar largura máxima dos campos */
+  max-width: 400px; 
 }
 
 .form-group label {
@@ -63,7 +63,7 @@
 }
 
 .submit-button {
-  background-color: #163a63; /* Cor de fundo escura para maior destaque */
+  background-color: #163a63; 
   color: white;
   padding: 10px 20px;
   border: none;
@@ -74,7 +74,7 @@
 }
 
 .submit-button:hover {
-  background-color: #1f4d84; /* Cor mais clara ao passar o mouse */
+  background-color: #1f4d84; 
 }
 
 .footer-nav ul {

@@ -6,17 +6,17 @@ import './gestaoNotificacoes.css';
 const GestaoNotificacoes = () => {
   const [socios, setSocios] = useState([
     { id: 1, nome: 'João Silva', email: 'joao.silva@example.com', statusQuota: 'Em atraso', descricao: 'Quota Anual 2024', prazoPagamento: new Date('2024-12-31'), valor: '50€' },
-    { id: 2, nome: 'Maria Oliveira', email: 'maria.oliveira@example.com', statusQuota: 'Em dia', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
-    { id: 3, nome: 'José Pereira', email: 'modus@gmail.com', statusQuota: 'Em dia', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
-    { id: 4, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em dia', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
-    { id: 5, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em dia', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
-    { id: 6, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em dia', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
-    { id: 7, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em dia', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
-    { id: 8, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em dia', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
-    { id: 9, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em dia', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
-    { id: 10, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em dia', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
-    { id: 11, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em dia', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
-    { id: 12, nome: 'Rui Santos', email: 'rui@gmail.com', statusQuota: 'Em dia', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
+    { id: 2, nome: 'Maria Oliveira', email: 'maria.oliveira@example.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
+    { id: 3, nome: 'José Pereira', email: 'modus@gmail.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
+    { id: 4, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
+    { id: 5, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
+    { id: 6, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
+    { id: 7, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
+    { id: 8, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
+    { id: 9, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
+    { id: 10, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
+    { id: 11, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
+    { id: 12, nome: 'Rui Santos', email: 'rui@gmail.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
 
 
   ]);
@@ -24,7 +24,6 @@ const GestaoNotificacoes = () => {
   const [selectedSocios, setSelectedSocios] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
@@ -51,9 +50,7 @@ const GestaoNotificacoes = () => {
 
   const filteredSocios = socios.filter(
     (socio) =>
-      (socio.nome.toLowerCase().includes(searchTerm.toLowerCase()) || socio.email.toLowerCase().includes(searchTerm.toLowerCase())) &&
-      (filterStatus === '' || socio.statusQuota === filterStatus)
-  );
+      (socio.nome.toLowerCase().includes(searchTerm.toLowerCase()) || socio.email.toLowerCase().includes(searchTerm.toLowerCase())));
 
   const indexOfLastSocio = currentPage * itemsPerPage;
   const indexOfFirstSocio = indexOfLastSocio - itemsPerPage;
@@ -78,26 +75,15 @@ const GestaoNotificacoes = () => {
             </Card.Body>
           </Card>
 
-          <div className="d-flex justify-content-between align-items-center mb-3">
+          <div className="d-flex justify-content-end mb-3">
             <Form.Control
               type="text"
               placeholder="Pesquisar sócios por nome ou email"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-bar"
-              style={{ width: '60%' }}
+              style={{ width: '30%' }}
             />
-            <Form.Control
-              as="select"
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="status-filter"
-              style={{ width: '35%' }}
-            >
-              <option value="">Filtre os Sócios pelo Status da Quota &#x25BC;</option>
-              <option value="Em dia">Em dia</option>
-              <option value="Em atraso">Em atraso</option>
-            </Form.Control>
           </div>
 
           <Table striped bordered hover>

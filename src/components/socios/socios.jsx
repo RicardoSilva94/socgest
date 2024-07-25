@@ -138,12 +138,12 @@ const Socios = () => {
   };
 
   const handleAddSocio = (novoSocio) => {
-    // Implemente a lógica para adicionar o sócio aqui
+    // Implementar a lógica para adicionar o sócio aqui
     console.log('Adicionar novo sócio', novoSocio);
   };
 
   const handleEditSocio = (socioEditado) => {
-    // Implemente a lógica para editar o sócio aqui
+    // Implementar a lógica para editar o sócio aqui
     console.log('Editar sócio', socioEditado);
   };
 
@@ -227,7 +227,6 @@ const Socios = () => {
         />
       )}
 
-      {/* Modal de confirmação para exclusão */}
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Confirmar exclusão</Modal.Title>
