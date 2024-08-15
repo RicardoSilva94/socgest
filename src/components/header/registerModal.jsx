@@ -4,13 +4,18 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import PropTypes from 'prop-types';
 import './header.css';
+import axios from '../../api/axios';
+import Alert from 'react-bootstrap/Alert';
 
-export default function RegisterModal({ show, handleClose }) {
+export default function RegisterModal({ show, handleClose, handleShowLogin }) { // Adicionado handleShowLogin como prop
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(''); // Estado para a mensagem de sucesso ou erro
+  const [messageType, setMessageType] = useState(''); // Estado para o tipo de mensagem (sucesso ou erro)
 
   const validateForm = () => {
     const newErrors = {};
@@ -27,8 +32,8 @@ export default function RegisterModal({ show, handleClose }) {
 
     if (!password) {
       newErrors.password = 'A password é obrigatória';
-    } else if (password.length < 6) {
-      newErrors.password = 'A password deve ter pelo menos 6 caracteres';
+    } else if (password.length < 8) {
+      newErrors.password = 'A password deve ter pelo menos 8 caracteres';
     }
 
     if (!confirmPassword) {
@@ -42,12 +47,44 @@ export default function RegisterModal({ show, handleClose }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (validateForm()) {
-      // Lógica de registo aqui
-      console.log('Formulário enviado:', { name, email, password, confirmPassword });
-      handleClose();
+      setLoading(true);
+      setMessage(''); // Resetar a mensagem antes de fazer a requisição
+      setMessageType('');
+
+      try {
+        const response = await axios.post('/register', {
+          name,
+          email,
+          password,
+          password_confirmation: confirmPassword, // Campo para confirmar a senha
+        });
+
+        setMessage('Utilizador registado com sucesso!'); // Mensagem de sucesso
+        setMessageType('success');
+        
+        // Espera alguns segundos antes de redirecionar para o login
+        setTimeout(() => {
+          handleClose();
+          handleShowLogin(); // Exibir o modal de login após o registro bem-sucedido
+        }, 2000); // 2 segundos de espera
+
+      } catch (error) {
+        if (error.response && error.response.data) {
+          setErrors(error.response.data);
+          setMessage('Não foi possível fazer o seu registo!'); // Mensagem de erro
+          setMessageType('danger');
+        } else {
+          console.error('Erro desconhecido:', error);
+          setMessage('Erro desconhecido. Tente novamente mais tarde.'); // Mensagem de erro desconhecido
+          setMessageType('danger');
+        }
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -57,6 +94,11 @@ export default function RegisterModal({ show, handleClose }) {
         <Modal.Title>Registar</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        {message && ( // Exibir o alerta de mensagem se existir
+          <Alert variant={messageType}>
+            {message}
+          </Alert>
+        )}
         <Form className="custom-form" onSubmit={handleSubmit} noValidate>
           <Form.Group controlId="formName">
             <Form.Label>Nome</Form.Label>
@@ -114,8 +156,8 @@ export default function RegisterModal({ show, handleClose }) {
             </Form.Control.Feedback>
           </Form.Group>
 
-          <Button variant="primary" type="submit" className="mt-3 custom-button">
-            Registar
+          <Button variant="primary" type="submit" className="mt-3 custom-button" disabled={loading}>
+            {loading ? 'Aguarde...' : 'Registar'}
           </Button>
         </Form>
       </Modal.Body>
@@ -126,4 +168,5 @@ export default function RegisterModal({ show, handleClose }) {
 RegisterModal.propTypes = {
   show: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
+  handleShowLogin: PropTypes.func.isRequired, // Adicionado como prop obrigatória
 };
