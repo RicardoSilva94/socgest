@@ -7,7 +7,7 @@ import './header.css';
 import axios from '../../api/axios';
 import Alert from 'react-bootstrap/Alert';
 
-export default function RegisterModal({ show, handleClose, handleShowLogin }) { // Adicionado handleShowLogin como prop
+export default function RegisterModal({ show, handleClose, handleShowLogin }) { 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -69,7 +69,7 @@ export default function RegisterModal({ show, handleClose, handleShowLogin }) { 
         // Espera alguns segundos antes de redirecionar para o login
         setTimeout(() => {
           handleClose();
-          handleShowLogin(); // Exibir o modal de login após o registro bem-sucedido
+          handleShowLogin(); // Exibir o modal de login após o registo bem-sucedido
         }, 2000); // 2 segundos de espera
 
       } catch (error) {
@@ -94,7 +94,7 @@ export default function RegisterModal({ show, handleClose, handleShowLogin }) { 
         <Modal.Title>Registar</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {message && ( // Exibir o alerta de mensagem se existir
+        {message && (
           <Alert variant={messageType}>
             {message}
           </Alert>
@@ -168,5 +168,5 @@ export default function RegisterModal({ show, handleClose, handleShowLogin }) { 
 RegisterModal.propTypes = {
   show: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
-  handleShowLogin: PropTypes.func.isRequired, // Adicionado como prop obrigatória
+  handleShowLogin: PropTypes.func.isRequired, 
 };

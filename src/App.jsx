@@ -9,11 +9,14 @@ import GestaoQuotas from './pages/gestaoQuotas';
 import Perfil from './pages/perfil';
 import GestaoEntidade from './pages/gestaoEntidade';
 import Notificacoes from './pages/notificacoes';
+import { UserProvider } from './UserContext';
 
 
 function App() {
   return (
+    
     <Router>
+      <UserProvider>
       <div className="App">
         <Switch>
           <Route path="/" exact component={Home} />
@@ -25,6 +28,7 @@ function App() {
           <Route path="/notificacoes" component={Notificacoes} />
         </Switch>
       </div>
+      </UserProvider>
     </Router>
   );
 }

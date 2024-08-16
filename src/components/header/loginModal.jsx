@@ -5,17 +5,22 @@ import Form from 'react-bootstrap/Form';
 import PropTypes from 'prop-types';
 import './header.css';
 import RecoverPasswordModal from './recoverPasswordModal';
+import axios from '../../api/axios'; 
+import { useUser } from '../../UserContext';
 
-export default function LoginModal({ show, handleClose, handleShowRegister }) {
+export default function LoginModal({ show, handleClose, handleShowRegister, handleLogin }) {
   const [showRecoverPasswordModal, setShowRecoverPasswordModal] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { setUser } = useUser();
 
   const handleCloseRecoverPasswordModal = () => setShowRecoverPasswordModal(false);
   const handleShowRecoverPasswordModal = () => {
-    handleClose();  // Fechar o modal de login
+    handleClose(); // Fechar o modal de login
     setShowRecoverPasswordModal(true);
   };
 
@@ -50,12 +55,46 @@ export default function LoginModal({ show, handleClose, handleShowRegister }) {
     return valid;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (validateForm()) {
-      console.log('Formulário válido. Submeter dados de login.');
-      // Lógica de login aqui
+      setLoading(true);
+      setLoginError('');
+  
+      try {
+        const response = await axios.post('/login', {
+          email,
+          password,
+        });
+  
+        console.log('Login response:', response);
+  
+        // Armazenar o token
+        localStorage.setItem('token', response.data.access_token);
+  
+        // Configurar o token para futuras requisições
+        axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`;
+  
+        // Buscar informações do usuário
+        const userResponse = await axios.get('/user');
+  
+        console.log('User response:', userResponse);
+  
+        // Atualizar o estado do usuário
+        setUser(userResponse.data.data);  // Note o .data aqui, pois estamos usando UserResource
+        handleLogin(userResponse.data.data);
+        handleClose(); // Fechar o modal
+  
+      } catch (error) {
+        if (error.response && error.response.data) {
+          setLoginError('O login falhou. Verifique suas credenciais e tente novamente.');
+        } else {
+          setLoginError('Ocorreu um erro ao tentar fazer login. Tente novamente mais tarde.');
+        }
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -66,6 +105,11 @@ export default function LoginModal({ show, handleClose, handleShowRegister }) {
           <Modal.Title>Login</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          {loginError && (
+            <div className="alert alert-danger">
+              {loginError}
+            </div>
+          )}
           <Form className="custom-form" onSubmit={handleSubmit} noValidate>
             <Form.Group controlId="formEmail">
               <Form.Label>Email</Form.Label>
@@ -95,8 +139,8 @@ export default function LoginModal({ show, handleClose, handleShowRegister }) {
               </Form.Control.Feedback>
             </Form.Group>
 
-            <Button variant="primary" type="submit" className="mt-3 custom-button">
-              Login
+            <Button variant="primary" type="submit" className="mt-3 custom-button" disabled={loading}>
+              {loading ? 'Aguarde...' : 'Login'}
             </Button>
             <p className="mt-3">
               Não tem uma conta? <span onClick={handleShowRegister} style={{ color: '#1f4d84', cursor: 'pointer' }}>Registar</span>
@@ -120,4 +164,5 @@ LoginModal.propTypes = {
   show: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   handleShowRegister: PropTypes.func.isRequired,
+  handleLogin: PropTypes.func.isRequired,
 };

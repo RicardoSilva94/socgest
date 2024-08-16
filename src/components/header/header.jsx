@@ -6,6 +6,9 @@ import './header.css';
 import LoginModal from './loginModal';
 import RegisterModal from './registerModal';
 import { Link, useHistory } from 'react-router-dom';
+import { useUser } from '../../UserContext';
+import Button from 'react-bootstrap/Button';
+import { PersonCircle } from 'react-bootstrap-icons';
 
 // Função para fazer scroll suave até o topo da página
 export const handleScrollToTop = (event) => {
@@ -15,6 +18,10 @@ export const handleScrollToTop = (event) => {
 
 export default function AppHeader() {
   const history = useHistory();
+  const { user, setUser, logout } = useUser();
+  console.log('AppHeader user:', user); // Debugging line
+
+  const [authenticatedUser, setAuthenticatedUser] = useState(null);
 
   const handleNavigateHome = (event) => {
     history.push('/');
@@ -31,7 +38,7 @@ export default function AppHeader() {
 
     window.scrollTo({ top: y, behavior: 'smooth' });
   };
-  
+
   // Estado para controlar a exibição do modal de login
   const [showLoginModal, setShowLoginModal] = useState(false);
   // Estado para controlar a exibição do modal de registo
@@ -49,13 +56,19 @@ export default function AppHeader() {
     setShowLoginModal(false);
     setShowRegisterModal(true);
   };
+  //Função para lidar com o login do utilizador
+  const handleLogin = (userData) => {
+    console.log('Handle login called with:', userData); // Debugging line
+    setUser(userData); 
+    setAuthenticatedUser(userData);
+    handleCloseLogin(); // Fecha o modal de login após o login bem-sucedido
+  };
+
 
   return (
     <>
-      {/* Navbar fixada no topo da página */}
       <Navbar expand="lg" className="bg-body-tertiary py-3" style={{ position: 'fixed', top: 0, width: '100%', zIndex: 1000 }}>
         <Container>
-          {/* Link para a home com função para scroll suave ao topo */}
           <Link to="/" className="navbar-brand" onClick={handleNavigateHome}>
             <img
               src={'images/logo.png'} 
@@ -76,19 +89,38 @@ export default function AppHeader() {
               <Nav.Link href="/quotas">Quotas</Nav.Link>
               <Nav.Link href="#about" onClick={(e) => handleScrollToSection(e, 'about')}>Quem Somos</Nav.Link>
               <Nav.Link href="#contactos" onClick={(e) => handleScrollToSection(e, 'contactos')}>Contactos</Nav.Link>
-              <Nav.Link onClick={handleShowLogin} style={{ borderRadius: '5px', color: 'white', backgroundColor: '#1f4d84', cursor: 'pointer' }}>Entrar</Nav.Link>
+              {user ? (
+                <>
+                  <div className="d-flex align-items-center me-3">
+                    <PersonCircle size={24} className="me-2" />
+                    <span className="fw-bold">Bem-vindo, {user.name}!</span>
+                  </div>
+                  <Button 
+                    variant="outline-danger" 
+                    onClick={logout} 
+                  >
+                    Sair
+                  </Button>
+                </>
+              ) : (
+                <Button 
+                  variant="primary" 
+                  onClick={handleShowLogin} 
+                >
+                  Entrar
+                </Button>
+              )}
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
 
-      {/* Modal de Login */}
-      <LoginModal show={showLoginModal} handleClose={handleCloseLogin} handleShowRegister={handleShowRegister} />
-      {/* Modal de Registo */}
+      <LoginModal show={showLoginModal} handleClose={handleCloseLogin} handleShowRegister={handleShowRegister} handleLogin={handleLogin} />
       <RegisterModal show={showRegisterModal} handleClose={handleCloseRegister} handleShowLogin={handleShowLogin} />
     </>
   );
 }
+
 
     
 
