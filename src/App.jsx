@@ -10,6 +10,7 @@ import Perfil from './pages/perfil';
 import GestaoEntidade from './pages/gestaoEntidade';
 import Notificacoes from './pages/notificacoes';
 import { UserProvider } from './UserContext';
+import ResetPasswordForm from './components/header/resetPasswordForm';
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
           <Route path="/entidade" component={GestaoEntidade} />
           <Route path="/perfil" component={Perfil} />
           <Route path="/notificacoes" component={Notificacoes} />
+          <Route path="/reset-password/:token" component={ResetPasswordForm} />
         </Switch>
       </div>
       </UserProvider>
