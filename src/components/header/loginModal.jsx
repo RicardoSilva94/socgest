@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import './header.css';
 import RecoverPasswordModal from './recoverPasswordModal';
 import axios from '../../api/axios'; 
-import { useUser } from '../../UserContext';
+import { useUser } from '../../context/UserContext';
 
 export default function LoginModal({ show, handleClose, handleShowRegister, handleLogin }) {
   const [showRecoverPasswordModal, setShowRecoverPasswordModal] = useState(false);

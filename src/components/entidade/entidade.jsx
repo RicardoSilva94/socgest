@@ -1,79 +1,280 @@
-import React, { useState } from 'react';
-import { Container, Row, Col, Button, Form, Card, Modal, Image } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Button, Form, Card, Modal, Image, Alert } from 'react-bootstrap';
 import { FaIdCard, FaEnvelope, FaPhone, FaMapMarkerAlt, FaMoneyBillWave, FaImage, FaPlus, FaBuilding, FaList, FaEye, FaEdit } from 'react-icons/fa';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './entidade.css';
+import axios from '../../api/axios';
+import { useUser } from '../../context/UserContext';
 
 const Entidade = () => {
+  const { user } = useUser(); // Obtém o usuário do contexto
   const [entidadeData, setEntidadeData] = useState({
     nome: '',
     nif: '',
     email: '',
     telefone: '',
     morada: '',
-    tipoQuota: 'Anual',
-    valorQuota: '',
-    imagem: null
+    tipo_quota: 'Anual',
+    valor_quota: '',
+    imagem: null,
   });
 
-  const [isEditable, setIsEditable] = useState(false); // Estado para controlar se os campos são editáveis
-  const [showModal, setShowModal] = useState(false); // Estado para controlar a exibição do modal
+  const [isEditable, setIsEditable] = useState(true); // Controle se os campos são editáveis
+  const [showModal, setShowModal] = useState(false); // Controle da exibição do modal
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [entidadeId, setEntidadeId] = useState(null)
+
+  // Função para buscar dados da API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (user && user.id) { // Verifica se o usuário está disponível
+          console.log('Carregando dados da entidade para o user:', user.id);
+          const response = await axios.get(`/entidades/${user.id}`); // Usa o userId na URL
+          console.log('Dados da entidade:', response);
+  
+          if (response.data) { // Verifica se há dados retornados
+            const entidade = response.data;
+            setEntidadeData({
+              nome: entidade.nome || '',
+              nif: entidade.nif || '',
+              email: entidade.email || '',
+              telefone: entidade.telefone || '',
+              morada: entidade.morada || '',
+              tipo_quota: entidade.tipo_quota || 'Anual', 
+              valor_quota: entidade.valor_quota || '',    
+              imagem: entidade.logotipo || null,       
+            });
+            setEntidadeId(entidade.id); // Define o ID da entidade
+          }
+        } else {
+          setErrorMessage('Utilizador não encontrado.'); // Exibe uma mensagem de erro se o usuário não for encontrado
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados da API:', error);
+      }
+    };
+  
+    fetchData();
+  }, [user]);
+  
 
   // Função para lidar com mudanças nos campos de formulário
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === 'imagem') {
-      setEntidadeData(prevState => ({ ...prevState, [name]: files[0] }));
+      setEntidadeData((prevState) => ({ ...prevState, [name]: files[0] }));
     } else {
-      setEntidadeData(prevState => ({ ...prevState, [name]: value }));
+      setEntidadeData((prevState) => ({ ...prevState, [name]: value }));
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Entidade editada:', entidadeData);
-    setIsEditable(false); // Após submeter, desativa o modo de edição
-  };
+ // Função para lidar com o envio do formulário
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  console.log('Dados do formulário:', entidadeData);
+  if (!entidadeData.tipo_quota || !entidadeData.valor_quota) {
+    setErrorMessage('Tipo de quota e valor da quota são obrigatórios.');
+    return;
+  }
 
-  // Função para renderizar um campo de formulário com rótulo e ícone
-  const renderField = (label, icon, value, name, type = "text") => (
-    <Form.Group className="mb-3 d-flex align-items-center" controlId={`form${name}`}>
-      <Form.Label className="me-2 mb-0" style={{ whiteSpace: 'nowrap' }}>
-        {icon} {label}:
-      </Form.Label>
-      {isEditable ? (
-        <Form.Control 
-          type={type} 
-          placeholder={`Introduza o ${label.toLowerCase()}`} 
-          name={name} 
-          value={value} 
-          onChange={handleChange} 
-          style={{ flex: 1 }}
-        />
-      ) : (
-        <Form.Control 
-          type={type} 
-          readOnly 
-          plaintext 
-          value={value || "N/A"} 
-          style={{ flex: 1 }}
-        />
-      )}
-    </Form.Group>
-  );
+  try {
+    const formData = new FormData();
+    Object.keys(entidadeData).forEach((key) => {
+      formData.append(key, entidadeData[key]);
+    });
+    if (user && user.id) {
+      formData.append('user_id', user.id);
+    } else {
+      setErrorMessage('User ID não encontrado.');
+      return;
+    }
 
-  // Função para renderizar a pré-visualização da imagem
-  const renderImagePreview = () => (
-    <div className="text-center mb-3">
-      {entidadeData.imagem ? (
-        <Image src={URL.createObjectURL(entidadeData.imagem)} fluid style={{ maxWidth: '100px' }} />
-      ) : (
-        <div className="border rounded p-2" style={{ width: '100px', height: '100px' }}>
-          <FaImage size={50} />
-          <p className="mt-2">Logotipo</p>
+    const url = entidadeId ? `/entidades/${entidadeId}` : '/entidades';
+    console.log('URL da solicitação:', url);
+    const method = entidadeId ? 'put' : 'post';
+
+    const response = await axios({
+      method,
+      url,
+      data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    if (response.status === 200 || response.status === 201) {
+      setSuccessMessage('Dados salvos com sucesso!');
+      setErrorMessage('');
+      setIsEditable(false);
+      setShowModal(false);
+    }
+  } catch (error) {
+    console.error('Erro ao salvar dados:', error.response ? error.response.data : error.message);
+    const errorMsg = error.response && error.response.data ? error.response.data.message : 'Erro desconhecido';
+    setErrorMessage(errorMsg);
+  }
+};
+
+ // Função para renderizar a pré-visualização da imagem
+ const renderImagePreview = () => (
+  <div className="text-center mb-3">
+    {entidadeData.imagem ? (
+      <Image src={URL.createObjectURL(entidadeData.imagem)} fluid style={{ maxWidth: '100px' }} />
+    ) : (
+      <div className="border rounded p-2" style={{ width: '100px', height: '100px' }}>
+        <FaImage size={50} />
+        <p className="mt-2">Logotipo</p>
+      </div>
+    )}
+  </div>
+)
+
+  // Função para renderizar o conteúdo do modal
+  const renderModalContent = () => (
+    <Form onSubmit={handleSubmit}>
+      <div className="mb-3 d-flex align-items-center">
+        <FaBuilding className="me-1" style={{ fontSize: '1.5em' }} />
+        {isEditable ? (
+          <Form.Control
+            type="text"
+            placeholder="Introduza o nome da entidade"
+            name="nome"
+            value={entidadeData.nome}
+            onChange={handleChange}
+            style={{ flex: 1 }}
+          />
+        ) : (
+          <span>{entidadeData.nome || 'N/A'}</span>
+        )}
+      </div>
+      <div className="mb-3 d-flex align-items-center">
+        <FaIdCard className="me-1" style={{ fontSize: '1.5em' }} />
+        {isEditable ? (
+          <Form.Control
+            type="text"
+            placeholder="Introduza o NIF"
+            name="nif"
+            value={entidadeData.nif}
+            onChange={handleChange}
+            style={{ flex: 1 }}
+          />
+        ) : (
+          <span>{entidadeData.nif || 'N/A'}</span>
+        )}
+      </div>
+      <div className="mb-3 d-flex align-items-center">
+        <FaEnvelope className="me-1" style={{ fontSize: '1.5em' }} />
+        {isEditable ? (
+          <Form.Control
+            type="email"
+            placeholder="Introduza o email"
+            name="email"
+            value={entidadeData.email}
+            onChange={handleChange}
+            style={{ flex: 1 }}
+          />
+        ) : (
+          <span>{entidadeData.email || 'N/A'}</span>
+        )}
+      </div>
+      <div className="mb-3 d-flex align-items-center">
+        <FaPhone className="me-1" style={{ fontSize: '1.5em' }} />
+        {isEditable ? (
+          <Form.Control
+            type="text"
+            placeholder="Introduza o telefone"
+            name="telefone"
+            value={entidadeData.telefone}
+            onChange={handleChange}
+            style={{ flex: 1 }}
+          />
+        ) : (
+          <span>{entidadeData.telefone || 'N/A'}</span>
+        )}
+      </div>
+      <div className="mb-3 d-flex align-items-center">
+        <FaMapMarkerAlt className="me-1" style={{ fontSize: '1.5em' }} />
+        {isEditable ? (
+          <Form.Control
+            type="text"
+            placeholder="Introduza a morada"
+            name="morada"
+            value={entidadeData.morada}
+            onChange={handleChange}
+            style={{ flex: 1 }}
+          />
+        ) : (
+          <span>{entidadeData.morada || 'N/A'}</span>
+        )}
+      </div>
+      <div className="mb-3 d-flex align-items-center">
+        <FaList className="me-1" style={{ fontSize: '1.5em' }} />
+        {isEditable ? (
+          <Form.Control
+            as="select"
+            name="tipo_quota"
+            value={entidadeData.tipo_quota}
+            onChange={handleChange}
+            style={{ flex: 1 }}
+          >
+            <option value="Anual">Anual</option>
+            <option value="Mensal">Mensal</option>
+          </Form.Control>
+        ) : (
+          <span>{entidadeData.tipo_quota || 'N/A'}</span>
+        )}
+      </div>
+      <div className="mb-3 d-flex align-items-center">
+        <FaMoneyBillWave className="me-1" style={{ fontSize: '1.5em' }} />
+        {isEditable ? (
+          <Form.Control
+            type="text"
+            placeholder="Introduza o valor"
+            name="valor_quota"
+            value={entidadeData.valor_quota}
+            onChange={handleChange}
+            style={{ flex: 1 }}
+          />
+        ) : (
+          <span>{entidadeData.valor_quota || 'N/A'}</span>
+        )}
+      </div>
+      <div className="text-center">
+        {renderImagePreview()}
+        {isEditable && (
+          <Form.Control
+            type="file"
+            name="imagem"
+            onChange={handleChange}
+            style={{ flex: 1 }}
+          />
+        )}
+      </div>
+      {isEditable && (
+        <div className="text-center mt-4">
+          <Button variant="primary" type="submit">
+            Salvar
+          </Button>
         </div>
       )}
-    </div>
+    </Form>
+  );
+
+  const renderMessages = () => (
+    <>
+      {successMessage && (
+        <Alert variant="success" onClose={() => setSuccessMessage('')} dismissible>
+          {successMessage}
+        </Alert>
+      )}
+      {errorMessage && (
+        <Alert variant="danger" onClose={() => setErrorMessage('')} dismissible>
+          {errorMessage}
+        </Alert>
+      )}
+    </>
   );
 
   return (
@@ -85,34 +286,36 @@ const Entidade = () => {
               Criar Entidade / Associação
             </Card.Header>
             <Card.Body>
+               {/* Exibe as mensagens de sucesso ou erro */}
+               {renderMessages()}
               <Form onSubmit={handleSubmit}>
+                {/* Campos de formulário na página */}
                 <Form.Group className="mb-3 d-flex align-items-center" controlId="formNome">
                   <Form.Label className="me-2 mb-0" style={{ whiteSpace: 'nowrap' }}>
                     <FaBuilding className="me-1" /> Nome:
                   </Form.Label>
-                  <Form.Control 
-                    type="text" 
-                    placeholder="Introduza o nome da entidade / associação" 
-                    name="nome" 
-                    value={entidadeData.nome} 
-                    onChange={handleChange} 
+                  <Form.Control
+                    type="text"
+                    placeholder="Introduza o nome da entidade / associação"
+                    name="nome"
+                    value={entidadeData.nome}
+                    onChange={handleChange}
                     style={{ flex: 1 }}
                     readOnly={!isEditable}
                   />
                 </Form.Group>
-
                 <Row className="mb-3">
                   <Col sm={6}>
                     <Form.Group className="d-flex align-items-center" controlId="formNif">
                       <Form.Label className="me-2 mb-0" style={{ whiteSpace: 'nowrap' }}>
                         <FaIdCard className="me-1" /> NIF:
                       </Form.Label>
-                      <Form.Control 
-                        type="text" 
-                        placeholder="Introduza o NIF" 
-                        name="nif" 
-                        value={entidadeData.nif} 
-                        onChange={handleChange} 
+                      <Form.Control
+                        type="text"
+                        placeholder="Introduza o NIF"
+                        name="nif"
+                        value={entidadeData.nif}
+                        onChange={handleChange}
                         style={{ flex: 1 }}
                         readOnly={!isEditable}
                       />
@@ -123,29 +326,28 @@ const Entidade = () => {
                       <Form.Label className="me-2 mb-0" style={{ whiteSpace: 'nowrap' }}>
                         <FaImage className="me-1" /> Imagem:
                       </Form.Label>
-                      <Form.Control 
-                        type="file" 
-                        name="imagem" 
-                        onChange={handleChange} 
+                      <Form.Control
+                        type="file"
+                        name="imagem"
+                        onChange={handleChange}
                         style={{ flex: 1 }}
                         readOnly={!isEditable}
                       />
                     </Form.Group>
                   </Col>
                 </Row>
-
                 <Row className="mb-3">
                   <Col sm={6}>
                     <Form.Group className="d-flex align-items-center" controlId="formEmail">
                       <Form.Label className="me-2 mb-0" style={{ whiteSpace: 'nowrap' }}>
                         <FaEnvelope className="me-1" /> Email:
                       </Form.Label>
-                      <Form.Control 
-                        type="email" 
-                        placeholder="Introduza o email" 
-                        name="email" 
-                        value={entidadeData.email} 
-                        onChange={handleChange} 
+                      <Form.Control
+                        type="email"
+                        placeholder="Introduza o email"
+                        name="email"
+                        value={entidadeData.email}
+                        onChange={handleChange}
                         style={{ flex: 1 }}
                         readOnly={!isEditable}
                       />
@@ -156,44 +358,42 @@ const Entidade = () => {
                       <Form.Label className="me-2 mb-0" style={{ whiteSpace: 'nowrap' }}>
                         <FaPhone className="me-1" /> Telefone:
                       </Form.Label>
-                      <Form.Control 
-                        type="text" 
-                        placeholder="Introduza o telefone" 
-                        name="telefone" 
-                        value={entidadeData.telefone} 
-                        onChange={handleChange} 
+                      <Form.Control
+                        type="text"
+                        placeholder="Introduza o telefone"
+                        name="telefone"
+                        value={entidadeData.telefone}
+                        onChange={handleChange}
                         style={{ flex: 1 }}
                         readOnly={!isEditable}
                       />
                     </Form.Group>
                   </Col>
                 </Row>
-
                 <Form.Group className="mb-3 d-flex align-items-center" controlId="formMorada">
                   <Form.Label className="me-2 mb-0" style={{ whiteSpace: 'nowrap' }}>
                     <FaMapMarkerAlt className="me-1" /> Morada:
                   </Form.Label>
-                  <Form.Control 
-                    type="text" 
-                    placeholder="Introduza a morada" 
-                    name="morada" 
-                    value={entidadeData.morada} 
-                    onChange={handleChange} 
+                  <Form.Control
+                    type="text"
+                    placeholder="Introduza a morada"
+                    name="morada"
+                    value={entidadeData.morada}
+                    onChange={handleChange}
                     style={{ flex: 1 }}
                     readOnly={!isEditable}
                   />
                 </Form.Group>
-
                 <Row className="mb-3">
                   <Col sm={6}>
-                    <Form.Group className="d-flex align-items-center" controlId="formTipoQuota">
+                    <Form.Group className="d-flex align-items-center" controlId="formTipo_quota">
                       <Form.Label className="me-2 mb-0" style={{ whiteSpace: 'nowrap' }}>
                         <FaList className="me-1" /> Tipo:
                       </Form.Label>
-                      <Form.Control 
-                        as="select" 
-                        name="tipoQuota" 
-                        value={entidadeData.tipoQuota} 
+                      <Form.Control
+                        as="select"
+                        name="tipo_quota"
+                        value={entidadeData.tipo_quota}
                         onChange={handleChange}
                         style={{ flex: 1 }}
                         readOnly={!isEditable}
@@ -204,40 +404,46 @@ const Entidade = () => {
                     </Form.Group>
                   </Col>
                   <Col sm={6}>
-                    <Form.Group className="d-flex align-items-center" controlId="formValorQuota">
+                    <Form.Group className="d-flex align-items-center" controlId="formValor_quota">
                       <Form.Label className="me-2 mb-0" style={{ whiteSpace: 'nowrap' }}>
                         <FaMoneyBillWave className="me-1" /> Valor:
                       </Form.Label>
-                      <Form.Control 
-                        type="text" 
-                        placeholder="Introduza o valor" 
-                        name="valorQuota" 
-                        value={entidadeData.valorQuota} 
-                        onChange={handleChange} 
+                      <Form.Control
+                        type="text"
+                        placeholder="Introduza o valor"
+                        name="valor_quota"
+                        value={entidadeData.valor_quota}
+                        onChange={handleChange}
                         style={{ flex: 1 }}
                         readOnly={!isEditable}
                       />
                     </Form.Group>
                   </Col>
                 </Row>
-
                 <div className="text-center mt-4">
                   <Button variant="primary" type="submit">
                     <FaPlus /> Criar Entidade
                   </Button>
-                  <Button variant="success" className="ms-2" onClick={() => setShowModal(true)}>
-                    <FaEye />  Ver mais
-                    </Button>
-                  {!isEditable && (
-                    <Button variant="info" className="ms-2" onClick={() => setIsEditable(true)}>
-                      <FaEdit /> Editar
-                    </Button>
-                  )}
-                  {isEditable && (
-                    <Button variant="secondary" className="ms-2" type="submit">
-                      Guardar Informações
-                    </Button>
-                  )}
+                  <Button
+                    variant="success"
+                    className="ms-2"
+                    onClick={() => {
+                      setIsEditable(false);
+                      setShowModal(true);
+                    }}
+                  >
+                    <FaEye /> Ver mais
+                  </Button>
+                  <Button
+                    variant="info"
+                    className="ms-2"
+                    onClick={() => {
+                      setIsEditable(true);
+                      setShowModal(true);
+                    }}
+                  >
+                    <FaEdit /> Editar
+                  </Button>
                 </div>
               </Form>
             </Card.Body>
@@ -245,44 +451,12 @@ const Entidade = () => {
         </Col>
       </Row>
 
-     {/* Modal para exibir informações */}
-     <Modal centered show={showModal} onHide={() => setShowModal(false)}>
+      {/* Modal para exibir informações ou edição */}
+      <Modal centered show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Informações da Entidade</Modal.Title>
+          <Modal.Title>{isEditable ? 'Editar Entidade' : 'Informações da Entidade'}</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <div className="mb-3 d-flex align-items-center">
-            <FaBuilding className="me-1" style={{ fontSize: '1.5em' }} />
-            <span> {entidadeData.nome}</span>
-          </div>
-          <div className="mb-3 d-flex align-items-center">
-            <FaIdCard className="me-1" style={{ fontSize: '1.5em' }} />
-            <span> {entidadeData.nif}</span>
-          </div>
-          <div className="mb-3 d-flex align-items-center">
-            <FaEnvelope className="me-1" style={{ fontSize: '1.5em' }} />
-            <span>{entidadeData.email}</span>
-          </div>
-          <div className="mb-3 d-flex align-items-center">
-            <FaPhone className="me-1" style={{ fontSize: '1.5em' }} />
-            <span>{entidadeData.telefone}</span>
-          </div>
-          <div className="mb-3 d-flex align-items-center">
-            <FaMapMarkerAlt className="me-1" style={{ fontSize: '1.5em' }} />
-            <span>{entidadeData.morada}</span>
-          </div>
-          <div className="mb-3 d-flex align-items-center">
-            <FaList className="me-1" style={{ fontSize: '1.5em' }} />
-            <span>{entidadeData.tipoQuota}</span>
-          </div>
-          <div className="mb-3 d-flex align-items-center">
-            <FaMoneyBillWave className="me-1" style={{ fontSize: '1.5em' }} />
-            <span>{entidadeData.valorQuota}</span>
-          </div>
-          <div className="text-center">
-            {renderImagePreview()}
-          </div>
-        </Modal.Body>
+        <Modal.Body>{renderModalContent()}</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Fechar

@@ -6,7 +6,7 @@ import './header.css';
 import LoginModal from './loginModal';
 import RegisterModal from './registerModal';
 import { Link, useHistory } from 'react-router-dom';
-import { useUser } from '../../UserContext';
+import { useUser } from '../../context/UserContext';
 import Button from 'react-bootstrap/Button';
 import { PersonCircle } from 'react-bootstrap-icons';
 

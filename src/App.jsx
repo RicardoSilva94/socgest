@@ -9,7 +9,7 @@ import GestaoQuotas from './pages/gestaoQuotas';
 import Perfil from './pages/perfil';
 import GestaoEntidade from './pages/gestaoEntidade';
 import Notificacoes from './pages/notificacoes';
-import { UserProvider } from './UserContext';
+import { UserProvider } from './context/UserContext';
 import ResetPasswordForm from './components/header/resetPasswordForm';
 
 
