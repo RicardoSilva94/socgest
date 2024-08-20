@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Button, Form, Card, Modal, Image, Alert } from 'react-bootstrap';
-import { FaIdCard, FaEnvelope, FaPhone, FaMapMarkerAlt, FaMoneyBillWave, FaImage, FaPlus, FaBuilding, FaList, FaEye, FaEdit } from 'react-icons/fa';
+import { Container, Row, Col, Button, Form, Card, Modal, Alert } from 'react-bootstrap';
+import { FaIdCard, FaEnvelope, FaPhone, FaMapMarkerAlt, FaMoneyBillWave, FaPlus, FaBuilding, FaList, FaEye, FaEdit } from 'react-icons/fa';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './entidade.css';
 import axios from '../../api/axios';
@@ -16,24 +16,23 @@ const Entidade = () => {
     morada: '',
     tipo_quota: 'Anual',
     valor_quota: '',
-    imagem: null,
   });
 
   const [isEditable, setIsEditable] = useState(true); // Controle se os campos são editáveis
   const [showModal, setShowModal] = useState(false); // Controle da exibição do modal
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [entidadeId, setEntidadeId] = useState(null)
+  const [entidadeId, setEntidadeId] = useState(null);
 
   // Função para buscar dados da API
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (user && user.id) { // Verifica se o usuário está disponível
+        if (user && user.id) { // Verifica se o user está disponível
           console.log('Carregando dados da entidade para o user:', user.id);
           const response = await axios.get(`/entidades/${user.id}`); // Usa o userId na URL
           console.log('Dados da entidade:', response);
-  
+
           if (response.data) { // Verifica se há dados retornados
             const entidade = response.data;
             setEntidadeData({
@@ -42,94 +41,75 @@ const Entidade = () => {
               email: entidade.email || '',
               telefone: entidade.telefone || '',
               morada: entidade.morada || '',
-              tipo_quota: entidade.tipo_quota || 'Anual', 
-              valor_quota: entidade.valor_quota || '',    
-              imagem: entidade.logotipo || null,       
+              tipo_quota: entidade.tipo_quota || 'Anual',
+              valor_quota: entidade.valor_quota || '',
             });
             setEntidadeId(entidade.id); // Define o ID da entidade
           }
         } else {
-          setErrorMessage('Utilizador não encontrado.'); // Exibe uma mensagem de erro se o usuário não for encontrado
+          setErrorMessage('Utilizador não encontrado.'); // Exibe uma mensagem de erro se o user não for encontrado
         }
       } catch (error) {
         console.error('Erro ao carregar dados da API:', error);
       }
     };
-  
+
     fetchData();
   }, [user]);
-  
 
   // Função para lidar com mudanças nos campos de formulário
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === 'imagem') {
-      setEntidadeData((prevState) => ({ ...prevState, [name]: files[0] }));
-    } else {
-      setEntidadeData((prevState) => ({ ...prevState, [name]: value }));
-    }
+    const { name, value } = e.target;
+    setEntidadeData((prevState) => ({ ...prevState, [name]: value }));
   };
 
- // Função para lidar com o envio do formulário
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  console.log('Dados do formulário:', entidadeData);
-  if (!entidadeData.tipo_quota || !entidadeData.valor_quota) {
-    setErrorMessage('Tipo de quota e valor da quota são obrigatórios.');
-    return;
-  }
-
-  try {
-    const formData = new FormData();
-    Object.keys(entidadeData).forEach((key) => {
-      formData.append(key, entidadeData[key]);
-    });
-    if (user && user.id) {
-      formData.append('user_id', user.id);
-    } else {
-      setErrorMessage('User ID não encontrado.');
+  // Função para lidar com o envio do formulário
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log('Dados do formulário:', entidadeData);
+    if (!entidadeData.tipo_quota || !entidadeData.valor_quota) {
+      setErrorMessage('Tipo de quota e valor da quota são obrigatórios.');
       return;
     }
 
-    const url = entidadeId ? `/entidades/${entidadeId}` : '/entidades';
-    console.log('URL da solicitação:', url);
-    const method = entidadeId ? 'put' : 'post';
+    try {
+      const formData = new FormData();
+      Object.keys(entidadeData).forEach((key) => {
+        formData.append(key, entidadeData[key]);
+      });
+      if (user && user.id) {
+        formData.append('user_id', user.id);
+      } else {
+        setErrorMessage('User ID não encontrado.');
+        return;
+      }
 
-    const response = await axios({
-      method,
-      url,
-      data: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+      const url = entidadeId ? `/entidades/${entidadeId}` : '/entidades';
+      console.log('URL da solicitação:', url);
+      const method = entidadeId ? 'put' : 'post';
 
-    if (response.status === 200 || response.status === 201) {
-      setSuccessMessage('Dados salvos com sucesso!');
-      setErrorMessage('');
-      setIsEditable(false);
-      setShowModal(false);
+      const response = await axios({
+        method,
+        url,
+        data: formData,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        setSuccessMessage('Dados salvos com sucesso!');
+        setErrorMessage('');
+        setIsEditable(false);
+        setShowModal(false);
+      }
+    } catch (error) {
+      console.error('Erro ao salvar dados:', error.response ? error.response.data : error.message);
+      const errorMsg = error.response && error.response.data ? error.response.data.message : 'Erro desconhecido';
+      setErrorMessage(errorMsg);
     }
-  } catch (error) {
-    console.error('Erro ao salvar dados:', error.response ? error.response.data : error.message);
-    const errorMsg = error.response && error.response.data ? error.response.data.message : 'Erro desconhecido';
-    setErrorMessage(errorMsg);
-  }
-};
-
- // Função para renderizar a pré-visualização da imagem
- const renderImagePreview = () => (
-  <div className="text-center mb-3">
-    {entidadeData.imagem ? (
-      <Image src={URL.createObjectURL(entidadeData.imagem)} fluid style={{ maxWidth: '100px' }} />
-    ) : (
-      <div className="border rounded p-2" style={{ width: '100px', height: '100px' }}>
-        <FaImage size={50} />
-        <p className="mt-2">Logotipo</p>
-      </div>
-    )}
-  </div>
-)
+  };
 
   // Função para renderizar o conteúdo do modal
   const renderModalContent = () => (
@@ -241,17 +221,6 @@ const Entidade = () => {
           <span>{entidadeData.valor_quota || 'N/A'}</span>
         )}
       </div>
-      <div className="text-center">
-        {renderImagePreview()}
-        {isEditable && (
-          <Form.Control
-            type="file"
-            name="imagem"
-            onChange={handleChange}
-            style={{ flex: 1 }}
-          />
-        )}
-      </div>
       {isEditable && (
         <div className="text-center mt-4">
           <Button variant="primary" type="submit">
@@ -315,20 +284,6 @@ const Entidade = () => {
                         placeholder="Introduza o NIF"
                         name="nif"
                         value={entidadeData.nif}
-                        onChange={handleChange}
-                        style={{ flex: 1 }}
-                        readOnly={!isEditable}
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col sm={6}>
-                    <Form.Group className="d-flex align-items-center" controlId="formImagem">
-                      <Form.Label className="me-2 mb-0" style={{ whiteSpace: 'nowrap' }}>
-                        <FaImage className="me-1" /> Imagem:
-                      </Form.Label>
-                      <Form.Control
-                        type="file"
-                        name="imagem"
                         onChange={handleChange}
                         style={{ flex: 1 }}
                         readOnly={!isEditable}
