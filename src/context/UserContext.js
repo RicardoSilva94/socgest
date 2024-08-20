@@ -22,8 +22,6 @@ export function UserProvider({ children }) {
     localStorage.removeItem('user');
     setUser(null);
     delete axios.defaults.headers.common['Authorization'];
-    // Opcional: fazer uma chamada à API para invalidar o token no backend
-    // axios.post('/logout');
   };
 
   console.log('UserProvider user state:', user);

@@ -1,13 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import './sidebar.css';
 import Nav from 'react-bootstrap/Nav';
 import { FaUsers, FaCoins, FaUser, FaBell, FaBuilding, FaSignOutAlt } from 'react-icons/fa';
+import { useUser} from '../../context/UserContext';
+import { useHistory } from 'react-router-dom';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { logout } = useUser();
+  const history = useHistory();
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleLogout = () => {
+    logout();
+    history.push('/');
   };
 
   return (
@@ -35,7 +44,7 @@ const Sidebar = () => {
           <Nav.Link href="/perfil">
             <FaUser className="nav-icon" /> Gerir Perfil
           </Nav.Link>
-          <Nav.Link href="/logout">
+          <Nav.Link onClick={handleLogout}>
             <FaSignOutAlt className="nav-icon" /> Terminar Sessão
           </Nav.Link>
         </Nav>
