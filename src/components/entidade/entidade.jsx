@@ -7,7 +7,7 @@ import axios from '../../api/axios';
 import { useUser } from '../../context/UserContext';
 
 const Entidade = () => {
-  const { user } = useUser(); // Obtém o usuário do contexto
+  const { user } = useUser(); // Obtém o user do context
   const [entidadeData, setEntidadeData] = useState({
     nome: '',
     nif: '',
@@ -18,7 +18,7 @@ const Entidade = () => {
     valor_quota: '',
   });
 
-  const [isEditable, setIsEditable] = useState(true); // Controle se os campos são editáveis
+  const [isEditable, setIsEditable] = useState(true); // Controla se os campos são editáveis
   const [showModal, setShowModal] = useState(false); // Controle da exibição do modal
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
