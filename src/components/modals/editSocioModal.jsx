@@ -6,9 +6,9 @@ import { FaUser, FaIdCard, FaPhone, FaEnvelope, FaMapMarkerAlt, FaStickyNote } f
 
 const EditSocioModal = ({ show, handleClose, handleEditSocio, socio }) => {
   const [nome, setNome] = useState('');
-  const [numSocio, setNumSocio] = useState('');
+  const [num_socio, setnum_socio] = useState('');
   const [nif, setNif] = useState('');
-  const [telemovel, setTelemovel] = useState('');
+  const [telefone, setTelefone] = useState('');
   const [email, setEmail] = useState('');
   const [morada, setMorada] = useState('');
   const [notas, setNotas] = useState('');
@@ -16,9 +16,9 @@ const EditSocioModal = ({ show, handleClose, handleEditSocio, socio }) => {
   useEffect(() => {
     if (socio) {
       setNome(socio.nome);
-      setNumSocio(socio.numSocio);
+      setnum_socio(socio.num_socio);
       setNif(socio.nif);
-      setTelemovel(socio.telemovel);
+      setTelefone(socio.telefone);
       setEmail(socio.email);
       setMorada(socio.morada);
       setNotas(socio.notas);
@@ -27,9 +27,9 @@ const EditSocioModal = ({ show, handleClose, handleEditSocio, socio }) => {
 
   const resetForm = () => {
     setNome('');
-    setNumSocio('');
+    setnum_socio('');
     setNif('');
-    setTelemovel('');
+    setTelefone('');
     setEmail('');
     setMorada('');
     setNotas('');
@@ -53,13 +53,13 @@ const EditSocioModal = ({ show, handleClose, handleEditSocio, socio }) => {
           </Form.Group>
           <Row>
             <Col>
-              <Form.Group controlId="formNumSocio" className='mb-3'>
+              <Form.Group controlId="formnum_socio" className='mb-3'>
                 <Form.Label><FaIdCard className="icon" /> Nº de Sócio</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Nº de sócio"
-                  value={numSocio}
-                  onChange={(e) => setNumSocio(e.target.value)}
+                  value={num_socio}
+                  onChange={(e) => setnum_socio(e.target.value)}
                 />
               </Form.Group>
             </Col>
@@ -77,13 +77,13 @@ const EditSocioModal = ({ show, handleClose, handleEditSocio, socio }) => {
           </Row>
           <Row>
             <Col>
-              <Form.Group controlId="formTelemovel" className='mb-3'>
+              <Form.Group controlId="formtelefone" className='mb-3'>
                 <Form.Label><FaPhone className="icon" /> Telemóvel</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Telemóvel"
-                  value={telemovel}
-                  onChange={(e) => setTelemovel(e.target.value)}
+                  value={telefone}
+                  onChange={(e) => setTelefone(e.target.value)}
                 />
               </Form.Group>
             </Col>
@@ -132,9 +132,9 @@ const EditSocioModal = ({ show, handleClose, handleEditSocio, socio }) => {
           handleEditSocio({
             id: socio.id,
             nome,
-            numSocio,
+            num_socio,
             nif,
-            telemovel,
+            telefone,
             email,
             morada,
             notas

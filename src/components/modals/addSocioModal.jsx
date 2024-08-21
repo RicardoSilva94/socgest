@@ -6,7 +6,7 @@ import { MdArrowDropDown } from 'react-icons/md'; // Ícone da seta
 const AddSocioModal = ({ show, handleClose, handleAddSocio }) => {
   const [nome, setNome] = useState('');
   const [nif, setNif] = useState('');
-  const [telemovel, setTelemovel] = useState('');
+  const [telefone, setTelefone] = useState('');
   const [email, setEmail] = useState('');
   const [morada, setMorada] = useState('');
   const [notas, setNotas] = useState('');
@@ -17,7 +17,7 @@ const AddSocioModal = ({ show, handleClose, handleAddSocio }) => {
   const resetForm = () => {
     setNome('');
     setNif('');
-    setTelemovel('');
+    setTelefone('');
     setEmail('');
     setMorada('');
     setNotas('');
@@ -82,14 +82,14 @@ const AddSocioModal = ({ show, handleClose, handleAddSocio }) => {
           </Row>
           <Row>
             <Col>
-              <Form.Group controlId="formTelemovel" className='mb-3'>
+              <Form.Group controlId="formtelefone" className='mb-3'>
                 <Form.Label><FaPhone className="icon" /> Telemóvel</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Telemóvel"
-                  value={telemovel}
+                  value={telefone}
                   onChange={(e) => {
-                    setTelemovel(e.target.value);
+                    setTelefone(e.target.value);
                     console.log('Telemóvel:', e.target.value); // Log para verificar o telemóvel
                   }}
                 />
@@ -149,7 +149,7 @@ const AddSocioModal = ({ show, handleClose, handleAddSocio }) => {
           const socioData = {
             nome,
             nif,
-            telemovel,
+            telefone,
             email,
             morada,
             notas,

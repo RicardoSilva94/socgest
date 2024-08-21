@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useTable, usePagination } from 'react-table';
-import { Button, Table, OverlayTrigger, Tooltip, Modal } from 'react-bootstrap';
+import { Button, Table, OverlayTrigger, Tooltip, Modal, Alert } from 'react-bootstrap';
 import { FaEye, FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './socios.css';
@@ -9,12 +9,11 @@ import EditSocioModal from '../modals/editSocioModal';
 import ViewSocioModal from '../modals/viewSocioModal';
 import axios from '../../api/axios';
 import { useUser } from '../../context/UserContext';
-import { Alert } from 'react-bootstrap';
-
 
 const Socios = () => {
   const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState('');
+  const [socios, setSocios] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -39,14 +38,10 @@ const Socios = () => {
     setShowViewSocioModal(true);
   };
 
-  const data = useMemo(() => [
-  ], [
-  ]);
-  
   const columns = useMemo(
     () => [
       { Header: 'Nome', accessor: 'nome' },
-      { Header: 'Nº Sócio', accessor: 'numSocio' },
+      { Header: 'Nº Sócio', accessor: 'num_socio' },
       { Header: 'Email', accessor: 'email' },
       {
         Header: 'Gerir Sócio',
@@ -95,13 +90,35 @@ const Socios = () => {
     usePagination
   );
 
+  const fetchSocios = async () => {
+    try {
+      const response = await axios.get('/socios');
+      const sociosData = response.data.socios;
+      if (Array.isArray(sociosData)) {
+        setSocios(sociosData);
+        setFilteredData(sociosData);
+      } else {
+        console.error('Os dados retornados não são um array:', sociosData);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar sócios:', error);
+      setAlertMessage('Erro ao buscar sócios. Por favor, tente novamente.');
+      setAlertVariant('danger');
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 3000);
+    }
+  };
+
   useEffect(() => {
-    const results = data.filter(socio =>
+    fetchSocios();
+  }, []);
+
+  useEffect(() => {
+    const results = socios.filter(socio =>
       socio.nome.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredData(results);
-  }, [searchTerm, data]);
-
+  }, [searchTerm, socios]);
 
   const handleAddSocio = async (socioData) => {
     try {
@@ -111,22 +128,20 @@ const Socios = () => {
       });
       console.log('Resposta da API:', response.data);
 
-      // Exibir mensagem de sucesso
       setAlertMessage('Sócio adicionado com sucesso!');
       setAlertVariant('success');
       setShowAlert(true);
       
-      // Ocultar a mensagem após alguns segundos (opcional)
       setTimeout(() => setShowAlert(false), 3000);
+      
+      fetchSocios();
     } catch (error) {
       console.error('Erro ao adicionar sócio:', error);
 
-      // Exibir mensagem de erro
       setAlertMessage('Erro ao adicionar sócio. Por favor, tente novamente.');
       setAlertVariant('danger');
       setShowAlert(true);
       
-      // Ocultar a mensagem após alguns segundos (opcional)
       setTimeout(() => setShowAlert(false), 3000);
     }
   };
@@ -136,8 +151,22 @@ const Socios = () => {
       const response = await axios.put(`/socios/${socioEditado.id}`, socioEditado);
       console.log('Sócio editado:', response.data);
       setShowEditSocioModal(false);
+
+      setAlertMessage('Sócio editado com sucesso!');
+      setAlertVariant('success');
+      setShowAlert(true);
+      
+      setTimeout(() => setShowAlert(false), 3000);
+      
+      fetchSocios();
     } catch (error) {
       console.error('Erro ao editar sócio:', error);
+
+      setAlertMessage('Erro ao editar sócio. Por favor, tente novamente.');
+      setAlertVariant('danger');
+      setShowAlert(true);
+      
+      setTimeout(() => setShowAlert(false), 3000);
     }
   };
 
@@ -146,10 +175,28 @@ const Socios = () => {
     setShowDeleteModal(true);
   };
 
-  const handleDelete = (id) => {
-    console.log('Excluir sócio com o id:', id);
-    setShowDeleteModal(false);
-    // Lógica para excluir o sócio
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`/socios/${id}`);
+      console.log('Sócio excluído com sucesso:', id);
+      setShowDeleteModal(false);
+      
+      setAlertMessage('Sócio excluído com sucesso!');
+      setAlertVariant('success');
+      setShowAlert(true);
+      
+      setTimeout(() => setShowAlert(false), 3000);
+      
+      fetchSocios();
+    } catch (error) {
+      console.error('Erro ao excluir sócio:', error);
+
+      setAlertMessage('Erro ao excluir sócio. Por favor, tente novamente.');
+      setAlertVariant('danger');
+      setShowAlert(true);
+      
+      setTimeout(() => setShowAlert(false), 3000);
+    }
   };
 
   return (
@@ -220,33 +267,25 @@ const Socios = () => {
       <AddSocioModal
         show={showAddSocioModal}
         handleClose={handleCloseAddSocioModal}
-        handleAddSocio={(socioData) => handleAddSocio(socioData, user)}
+        handleAddSocio={handleAddSocio}
       />
-
-      {selectedSocio && (
-        <EditSocioModal
-          show={showEditSocioModal}
-          handleClose={handleCloseEditSocioModal}
-          socio={selectedSocio}
-          handleEditSocio={handleEditSocio}
-        />
-      )}
-
-      {selectedSocio && (
-        <ViewSocioModal
-          show={showViewSocioModal}
-          handleClose={() => setShowViewSocioModal(false)}
-          socio={selectedSocio}
-        />
-      )}
+      <EditSocioModal
+        show={showEditSocioModal}
+        handleClose={handleCloseEditSocioModal}
+        socio={selectedSocio}
+        handleEditSocio={handleEditSocio}
+      />
+      <ViewSocioModal
+        show={showViewSocioModal}
+        handleClose={() => setShowViewSocioModal(false)}
+        socio={selectedSocio}
+      />
 
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirmar Exclusão</Modal.Title>
+          <Modal.Title>Confirmar exclusão</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          Tem certeza de que deseja excluir este sócio?
-        </Modal.Body>
+        <Modal.Body>Tem certeza que deseja excluir este sócio?</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
             Cancelar

@@ -13,9 +13,9 @@ const ViewSocioModal = ({ show, handleClose, socio }) => {
       </Modal.Header>
       <Modal.Body>
         <p><strong>Nome:</strong> {socio.nome}</p>
-        <p><strong>Nº de Sócio:</strong> {socio.numSocio}</p>
+        <p><strong>Nº de Sócio:</strong> {socio.num_socio}</p>
         <p><strong>NIF:</strong> {socio.nif}</p>
-        <p><strong>Telemóvel:</strong> {socio.telemovel}</p>
+        <p><strong>Telemóvel:</strong> {socio.telefone}</p>
         <p><strong>Email:</strong> {socio.email}</p>
         <p><strong>Morada:</strong> {socio.morada}</p>
         <p><strong>Notas:</strong> {socio.notas}</p>
