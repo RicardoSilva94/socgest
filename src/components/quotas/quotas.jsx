@@ -8,7 +8,7 @@ import GenerateQuotaModal from '../modals/generateQuotaModal';
 import DeleteQuotaModal from '../modals/deleteQuotaModal';
 import ConfirmPaymentModal from '../modals/confirmPaymentModal';
 import 'react-datepicker/dist/react-datepicker.css';
-import axios from '../../api/axios';  // Certifique-se de que está importando o axios correto
+import axios from '../../api/axios';
 import { useUser } from '../../context/UserContext';
 
 const Quotas = () => {
@@ -26,32 +26,52 @@ const Quotas = () => {
   const [alertVariant, setAlertVariant] = useState('success');
   const [data, setData] = useState([]); // Estado para armazenar os dados das quotas
 
+  // Fecha o modal de geração de quota
   const handleCloseGenerateQuotaModal = () => setShowGenerateQuotaModal(false);
+
+  // Abre o modal de geração de quota
   const handleShowGenerateQuotaModal = () => setShowGenerateQuotaModal(true);
 
-  useEffect(() => {
-    const fetchQuotas = async () => {
-      try {
-        const response = await axios.get('/quotas');
-        // Acesso a propriedade 'quotas' que é um array
-        if (response.data && Array.isArray(response.data.quotas)) {
-          setData(response.data.quotas);
-        } else {
-          console.error('Resposta da API não contém uma lista de quotas:', response.data);
-          setAlertMessage('Erro na resposta da API. Tente novamente.');
-          setAlertVariant('danger');
-          setShowAlert(true);
-        }
-      } catch (error) {
-        console.error('Erro ao buscar quotas:', error);
-        setAlertMessage('Erro ao buscar quotas. Tente novamente.');
+  // Faz a requisição para buscar quotas
+  const fetchQuotas = async () => {
+    try {
+      const response = await axios.get('/quotas');
+      if (response.data && Array.isArray(response.data.quotas)) {
+        const sortedData = response.data.quotas.sort((a, b) => new Date(b.data_emissao) - new Date(a.data_emissao));
+        setData(sortedData);
+      } else {
+        console.error('Resposta da API não contém uma lista de quotas:', response.data);
+        setAlertMessage('Erro na resposta da API. Tente novamente.');
         setAlertVariant('danger');
         setShowAlert(true);
       }
-    };
+    } catch (error) {
+      console.error('Erro ao buscar quotas:', error);
+      setAlertMessage('Erro ao buscar quotas. Tente novamente.');
+      setAlertVariant('danger');
+      setShowAlert(true);
+    }
+  };
 
+  // Carrega quotas na montagem do componente
+  useEffect(() => {
     fetchQuotas();
   }, []);
+
+  // Atualiza a lista filtrada e ordenada com base em searchTerm e paymentStatus
+  useEffect(() => {
+    const results = data.filter(quota => {
+      const lowerSearchTerm = searchTerm ? searchTerm.toLowerCase() : '';
+      const socioName = quota.socio ? quota.socio.nome.toLowerCase() : '';
+      return (
+        (paymentStatus === '' || quota.estado === paymentStatus) &&
+        socioName.includes(lowerSearchTerm)
+      );
+    });
+
+    const sortedResults = results.sort((a, b) => new Date(b.data_emissao) - new Date(a.data_emissao));
+    setFilteredData(sortedResults);
+  }, [searchTerm, data, paymentStatus]);
 
   const columns = useMemo(
     () => [
@@ -59,7 +79,7 @@ const Quotas = () => {
       {
         Header: 'Sócio',
         accessor: 'socio',
-        Cell: ({ value }) => value ? value.nome : 'Desconhecido' // Exibe o nome do sócio
+        Cell: ({ value }) => value ? value.nome : 'Desconhecido'
       },
       { Header: 'Descrição', accessor: 'descricao' },
       { Header: 'Período', accessor: 'periodo' },
@@ -77,7 +97,6 @@ const Quotas = () => {
             <span className="dropdown-title">Estado</span>
             <Dropdown onSelect={(eventKey) => setPaymentStatus(eventKey)} className="custom-dropdown">
               <Dropdown.Toggle variant="link" id="dropdown-basic" className="custom-dropdown-toggle">
-                {paymentStatus || 'Todos'}
               </Dropdown.Toggle>
               <Dropdown.Menu className="custom-dropdown-menu">
                 <Dropdown.Item eventKey="">Todos</Dropdown.Item>
@@ -133,27 +152,15 @@ const Quotas = () => {
     canNextPage,
     canPreviousPage,
     prepareRow,
+    state: { pageIndex, pageSize }
   } = useTable(
     {
       columns,
-      data: filteredData,
+      data: filteredData, // Usa filteredData para a tabela
       initialState: { pageIndex: 0, pageSize: 10 }
     },
     usePagination
   );
-
-  useEffect(() => {
-    // Filtra os dados com base no searchTerm e paymentStatus
-    const results = data.filter(quota => {
-      const socioId = quota.socio_id ? quota.socio_id.toString() : '';
-      const lowerSearchTerm = searchTerm ? searchTerm.toLowerCase() : '';
-      return (
-        (paymentStatus === '' || quota.estado === paymentStatus) &&
-        socioId.includes(lowerSearchTerm)
-      );
-    });
-    setFilteredData(results);
-  }, [searchTerm, data, paymentStatus]);
 
   const handleShowDeleteModal = (id) => {
     setDeleteId(id);
@@ -163,7 +170,7 @@ const Quotas = () => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(`/quotas/${id}`);
-      setData((prevData) => prevData.filter(quota => quota.id !== id));
+      await fetchQuotas(); // Recarrega os dados após a exclusão
       setAlertMessage('Quota excluída com sucesso!');
       setAlertVariant('success');
     } catch (error) {
@@ -183,7 +190,7 @@ const Quotas = () => {
       setShowAlert(true);
 
       const response = await axios.post('/quotas/emitir', quotaData);
-      setData((prevData) => [...prevData, response.data]);
+      await fetchQuotas(); // Recarrega os dados após a geração
       setAlertMessage('Quota gerada com sucesso!');
       setAlertVariant('success');
     } catch (error) {
@@ -205,16 +212,8 @@ const Quotas = () => {
 
   const handleConfirmPayment = async (id) => {
     try {
-      // Envia uma requisição POST para marcar a quota como paga
       const response = await axios.post(`/quotas/${id}`);
-
-      // Atualiza o estado para refletir a mudança
-      setData(prevData =>
-        prevData.map(quota =>
-          quota.id === id ? { ...quota, estado: 'Pago' } : quota
-        )
-      );
-
+      await fetchQuotas(); // Recarrega os dados após a confirmação do pagamento
       setAlertMessage(response.data.message);
       setAlertVariant('success');
     } catch (error) {
@@ -226,7 +225,6 @@ const Quotas = () => {
       setTimeout(() => setShowAlert(false), 3000);
     }
   };
-
 
   return (
     <div>
@@ -271,15 +269,31 @@ const Quotas = () => {
           })}
         </tbody>
       </Table>
-      <div className="pagination-controls">
-        <Button onClick={() => previousPage()} disabled={!canPreviousPage}>
-          Anterior
-        </Button>
-        <Button onClick={() => nextPage()} disabled={!canNextPage}>
-          Próxima
-        </Button>
+      <div className="pagination-controls d-flex justify-content-center mt-3">
+  <Button 
+    className="me-1" 
+    onClick={() => previousPage()} 
+    disabled={!canPreviousPage}
+  >
+    Anterior
+  </Button>
+  <Button 
+    className="ms-1" 
+    onClick={() => nextPage()} 
+    disabled={!canNextPage}
+  >
+    Próximo
+  </Button>
+</div>
+      <div className="results-info mt-3">
+        <span>A mostrar {filteredData.length} resultados</span>
+        <span> | Página {pageIndex + 1} de {Math.ceil(filteredData.length / pageSize)}</span>
       </div>
-      <GenerateQuotaModal show={showGenerateQuotaModal} handleClose={() => setShowGenerateQuotaModal(false)} onGenerate={handleGenerateQuota} />
+      <GenerateQuotaModal 
+        show={showGenerateQuotaModal} 
+        handleClose={handleCloseGenerateQuotaModal} 
+        handleGenerateQuota={handleGenerateQuota} 
+      />
       <DeleteQuotaModal
         show={showDeleteModal}
         handleClose={() => setShowDeleteModal(false)}
@@ -296,4 +310,3 @@ const Quotas = () => {
 };
 
 export default Quotas;
-
