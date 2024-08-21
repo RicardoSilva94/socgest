@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useTable, usePagination } from 'react-table';
 import { Button, Table, OverlayTrigger, Tooltip, Modal } from 'react-bootstrap';
 import { FaEye, FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
@@ -7,9 +7,13 @@ import './socios.css';
 import AddSocioModal from '../modals/addSocioModal';
 import EditSocioModal from '../modals/editSocioModal';
 import ViewSocioModal from '../modals/viewSocioModal';
+import axios from '../../api/axios';
+import { useUser } from '../../context/UserContext';
+import { Alert } from 'react-bootstrap';
 
 
 const Socios = () => {
+  const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -18,6 +22,9 @@ const Socios = () => {
   const [showEditSocioModal, setShowEditSocioModal] = useState(false);
   const [showViewSocioModal, setShowViewSocioModal] = useState(false);
   const [selectedSocio, setSelectedSocio] = useState(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertVariant, setAlertVariant] = useState('success'); 
 
   const handleCloseAddSocioModal = () => setShowAddSocioModal(false);
   const handleCloseEditSocioModal = () => setShowEditSocioModal(false);
@@ -32,32 +39,10 @@ const Socios = () => {
     setShowViewSocioModal(true);
   };
 
-  const data = useMemo(
-    () => [
-      { id: 1, nome: 'João Silva Farinha', numSocio: '001', email: 'joao.silva@example.com', nif: '123456789', telemovel: '913345589', morada: 'Rua do Sol, nº 123', notas: 'Sócio ativo fundador'},
-      { id: 2, nome: 'Maria Oliveira Roque', numSocio: '002', email: 'maria.oliveira@example.com' },
-      { id: 3, nome: 'Carlos Sousa', numSocio: '003', email: 'carlos.sousa@example.com' },
-      { id: 4, nome: 'Ana Santos', numSocio: '004', email: 'ana.santos@example.com' },
-      { id: 5, nome: 'Rui Pereira Silva', numSocio: '005', email: 'rui.pereira@example.com' },
-      { id: 6, nome: 'Marta Costa', numSocio: '006', email: 'marta.costa@example.com' },
-      { id: 7, nome: 'Pedro Rodrigues Jorge Febra', numSocio: '007', email: 'pedro.rodrigues@example.com' },
-      { id: 8, nome: 'Sofia Fernandes', numSocio: '008', email: 'sofia.fernandes@example.com' },
-      { id: 9, nome: 'José Almeida', numSocio: '009', email: 'jose.almeida@example.com' },
-      { id: 10, nome: 'Inês Ribeiro', numSocio: '010', email: 'ines.ribeiro@example.com' },
-      { id: 11, nome: 'Miguel Lopes', numSocio: '011', email: 'miguel.lopes@example.com' },
-      { id: 12, nome: 'Carolina Pereira', numSocio: '012', email: 'carolina.pereira@example.com' },
-      { id: 13, nome: 'António Silva', numSocio: '013', email: 'antonio.silva@example.com' },
-      { id: 14, nome: 'Diana Costa', numSocio: '014', email: 'diana.costa@example.com' },
-      { id: 15, nome: 'Ricardo Almeida', numSocio: '015', email: 'ricardo.almeida@example.com' },
-      { id: 16, nome: 'Mariana Ribeiro Gomes', numSocio: '016', email: 'mariana.ribeiro@example.com' },
-      { id: 17, nome: 'Hugo Lopes', numSocio: '017', email: 'hugo.lopes@example.com' },
-      { id: 18, nome: 'Sara Pereira', numSocio: '018', email: 'sara.pereira@example.com' },
-      { id: 19, nome: 'Vasco Silva', numSocio: '019', email: 'vasco.silva@example.com' },
-      { id: 20, nome: 'Pedro Rodrigues', numSocio: '020', email: 'teresa.costa@example.com' }
-    ],
-    []
-  );
-
+  const data = useMemo(() => [
+  ], [
+  ]);
+  
   const columns = useMemo(
     () => [
       { Header: 'Nome', accessor: 'nome' },
@@ -117,13 +102,43 @@ const Socios = () => {
     setFilteredData(results);
   }, [searchTerm, data]);
 
-  const handleView = (row) => {
-    console.log('Ver mais detalhes do sócio', row.original);
+
+  const handleAddSocio = async (socioData) => {
+    try {
+      const response = await axios.post('/socios', { 
+        ...socioData, 
+        entidade_id: user.entidade_id 
+      });
+      console.log('Resposta da API:', response.data);
+
+      // Exibir mensagem de sucesso
+      setAlertMessage('Sócio adicionado com sucesso!');
+      setAlertVariant('success');
+      setShowAlert(true);
+      
+      // Ocultar a mensagem após alguns segundos (opcional)
+      setTimeout(() => setShowAlert(false), 3000);
+    } catch (error) {
+      console.error('Erro ao adicionar sócio:', error);
+
+      // Exibir mensagem de erro
+      setAlertMessage('Erro ao adicionar sócio. Por favor, tente novamente.');
+      setAlertVariant('danger');
+      setShowAlert(true);
+      
+      // Ocultar a mensagem após alguns segundos (opcional)
+      setTimeout(() => setShowAlert(false), 3000);
+    }
   };
 
-  const handleEdit = (socio) => {
-    console.log('Editar sócio', socio);
-    handleShowEditSocioModal(socio);
+  const handleEditSocio = async (socioEditado) => {
+    try {
+      const response = await axios.put(`/socios/${socioEditado.id}`, socioEditado);
+      console.log('Sócio editado:', response.data);
+      setShowEditSocioModal(false);
+    } catch (error) {
+      console.error('Erro ao editar sócio:', error);
+    }
   };
 
   const handleShowDeleteModal = (id) => {
@@ -137,18 +152,13 @@ const Socios = () => {
     // Lógica para excluir o sócio
   };
 
-  const handleAddSocio = (novoSocio) => {
-    // Implementar a lógica para adicionar o sócio aqui
-    console.log('Adicionar novo sócio', novoSocio);
-  };
-
-  const handleEditSocio = (socioEditado) => {
-    // Implementar a lógica para editar o sócio aqui
-    console.log('Editar sócio', socioEditado);
-  };
-
   return (
     <div>
+      {showAlert && (
+        <Alert variant={alertVariant} onClose={() => setShowAlert(false)} dismissible>
+          {alertMessage}
+        </Alert>
+      )}
       <div className="d-flex justify-content-between align-items-center mb-2 mt-1">
         <button className="btn btn-custom" onClick={handleShowAddSocioModal}>
           <FaPlus className="mr-2" /> Adicionar Sócio
@@ -169,21 +179,25 @@ const Socios = () => {
       <Table {...getTableProps()} striped bordered hover>
         <thead>
           {headerGroups.map(headerGroup => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
+            <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
               {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                <th {...column.getHeaderProps()} key={column.id}>
+                  {column.render('Header')}
+                </th>
               ))}
             </tr>
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {page.map((row, i) => {
+          {page.map(row => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map(cell => {
-                  return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
-                })}
+              <tr {...row.getRowProps()} key={row.id}>
+                {row.cells.map(cell => (
+                  <td {...cell.getCellProps()} key={cell.column.id}>
+                    {cell.render('Cell')}
+                  </td>
+                ))}
               </tr>
             );
           })}
@@ -191,8 +205,7 @@ const Socios = () => {
       </Table>
       <div className="d-flex justify-content-between align-items-center mt-3">
         <div>
-          <Button style={{ marginRight: '10px' }}
-          onClick={() => previousPage()} disabled={!canPreviousPage}>
+          <Button style={{ marginRight: '10px' }} onClick={() => previousPage()} disabled={!canPreviousPage}>
             Página Anterior
           </Button>
           <Button onClick={() => nextPage()} disabled={!canNextPage}>
@@ -207,15 +220,15 @@ const Socios = () => {
       <AddSocioModal
         show={showAddSocioModal}
         handleClose={handleCloseAddSocioModal}
-        handleAddSocio={handleAddSocio}
+        handleAddSocio={(socioData) => handleAddSocio(socioData, user)}
       />
 
       {selectedSocio && (
         <EditSocioModal
           show={showEditSocioModal}
           handleClose={handleCloseEditSocioModal}
-          handleEditSocio={handleEditSocio}
           socio={selectedSocio}
+          handleEditSocio={handleEditSocio}
         />
       )}
 
@@ -229,17 +242,17 @@ const Socios = () => {
 
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirmar exclusão</Modal.Title>
+          <Modal.Title>Confirmar Exclusão</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Tem a certeza que deseja eliminar este sócio?
+          Tem certeza de que deseja excluir este sócio?
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
             Cancelar
           </Button>
           <Button variant="danger" onClick={() => handleDelete(deleteId)}>
-            Eliminar
+            Excluir
           </Button>
         </Modal.Footer>
       </Modal>

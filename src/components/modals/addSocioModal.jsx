@@ -1,24 +1,28 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
-import { FaUser, FaIdCard, FaPhone, FaEnvelope, FaMapMarkerAlt, FaStickyNote } from 'react-icons/fa';
+import { FaUser, FaIdCard, FaPhone, FaEnvelope, FaMapMarkerAlt, FaStickyNote, FaUniversalAccess } from 'react-icons/fa';
+import { MdArrowDropDown } from 'react-icons/md'; // Ícone da seta
 
 const AddSocioModal = ({ show, handleClose, handleAddSocio }) => {
   const [nome, setNome] = useState('');
-  const [numSocio, setNumSocio] = useState('');
   const [nif, setNif] = useState('');
   const [telemovel, setTelemovel] = useState('');
   const [email, setEmail] = useState('');
   const [morada, setMorada] = useState('');
   const [notas, setNotas] = useState('');
+  const [estado, setEstado] = useState('Activo'); // Estado padrão é "Activo"
+
+  const estados = ['Activo', 'Desistiu', 'Faleceu', 'Expulso', 'Suspenso'];
 
   const resetForm = () => {
     setNome('');
-    setNumSocio('');
     setNif('');
     setTelemovel('');
     setEmail('');
     setMorada('');
     setNotas('');
+    setEstado('Activo'); // Resetar o estado para "Activo"
+    console.log('Formulário resetado'); // Log para confirmar o reset do formulário
   };
 
   return (
@@ -34,19 +38,31 @@ const AddSocioModal = ({ show, handleClose, handleAddSocio }) => {
               type="text"
               placeholder="Nome do sócio"
               value={nome}
-              onChange={(e) => setNome(e.target.value)}
+              onChange={(e) => {
+                setNome(e.target.value);
+                console.log('Nome:', e.target.value); // Log para verificar o valor do nome
+              }}
             />
           </Form.Group>
           <Row>
             <Col>
-              <Form.Group controlId="formNumSocio" className='mb-3'>
-                <Form.Label><FaIdCard className="icon" /> Nº de Sócio</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Nº de sócio"
-                  value={numSocio}
-                  onChange={(e) => setNumSocio(e.target.value)}
-                />
+              <Form.Group controlId="formEstado" className='mb-3'>
+                <Form.Label><FaUniversalAccess className="icon" /> Estado</Form.Label>
+                <div className="position-relative">
+                  <Form.Control
+                    as="select"
+                    value={estado}
+                    onChange={(e) => {
+                      setEstado(e.target.value);
+                      console.log('Estado selecionado:', e.target.value); // Log para verificar o estado selecionado
+                    }}
+                  >
+                    {estados.map((opcao) => (
+                      <option key={opcao} value={opcao}>{opcao}</option>
+                    ))}
+                  </Form.Control>
+                  <MdArrowDropDown className="position-absolute top-50 end-0 translate-middle-y" style={{ right: '10px', fontSize: '1.5em' }} />
+                </div>
               </Form.Group>
             </Col>
             <Col>
@@ -56,7 +72,10 @@ const AddSocioModal = ({ show, handleClose, handleAddSocio }) => {
                   type="text"
                   placeholder="NIF"
                   value={nif}
-                  onChange={(e) => setNif(e.target.value)}
+                  onChange={(e) => {
+                    setNif(e.target.value);
+                    console.log('NIF:', e.target.value); // Log para verificar o NIF
+                  }}
                 />
               </Form.Group>
             </Col>
@@ -69,7 +88,10 @@ const AddSocioModal = ({ show, handleClose, handleAddSocio }) => {
                   type="text"
                   placeholder="Telemóvel"
                   value={telemovel}
-                  onChange={(e) => setTelemovel(e.target.value)}
+                  onChange={(e) => {
+                    setTelemovel(e.target.value);
+                    console.log('Telemóvel:', e.target.value); // Log para verificar o telemóvel
+                  }}
                 />
               </Form.Group>
             </Col>
@@ -80,7 +102,10 @@ const AddSocioModal = ({ show, handleClose, handleAddSocio }) => {
                   type="email"
                   placeholder="Email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    console.log('Email:', e.target.value); // Log para verificar o e-mail
+                  }}
                 />
               </Form.Group>
             </Col>
@@ -92,7 +117,10 @@ const AddSocioModal = ({ show, handleClose, handleAddSocio }) => {
               rows={2}
               placeholder="Morada"
               value={morada}
-              onChange={(e) => setMorada(e.target.value)}
+              onChange={(e) => {
+                setMorada(e.target.value);
+                console.log('Morada:', e.target.value); // Log para verificar a morada
+              }}
             />
           </Form.Group>
           <Form.Group controlId="formNotas">
@@ -102,7 +130,10 @@ const AddSocioModal = ({ show, handleClose, handleAddSocio }) => {
               rows={3}
               placeholder="Notas"
               value={notas}
-              onChange={(e) => setNotas(e.target.value)}
+              onChange={(e) => {
+                setNotas(e.target.value);
+                console.log('Notas:', e.target.value); // Log para verificar as notas
+              }}
             />
           </Form.Group>
         </Form>
@@ -115,15 +146,18 @@ const AddSocioModal = ({ show, handleClose, handleAddSocio }) => {
           Cancelar
         </Button>
         <Button variant="primary" onClick={() => {
-          handleAddSocio({
+          const socioData = {
             nome,
-            numSocio,
             nif,
             telemovel,
             email,
             morada,
-            notas
-          });
+            notas,
+            estado
+          };
+          console.log('Dados para adicionar sócio:', socioData); // Log para verificar os dados antes de adicionar
+          handleAddSocio(socioData);
+          console.log('Dados recebidos:', socioData); // Log para verificar os dados após adicionar
           handleClose();
           resetForm();
         }}>
@@ -135,3 +169,4 @@ const AddSocioModal = ({ show, handleClose, handleAddSocio }) => {
 };
 
 export default AddSocioModal;
+
