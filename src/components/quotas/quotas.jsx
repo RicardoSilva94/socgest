@@ -56,14 +56,22 @@ const Quotas = () => {
   const columns = useMemo(
     () => [
       { Header: 'ID', accessor: 'id' },
-      { Header: 'Sócio', accessor: 'socio_id' },
+      {
+        Header: 'Sócio',
+        accessor: 'socio',
+        Cell: ({ value }) => value ? value.nome : 'Desconhecido' // Exibe o nome do sócio
+      },
       { Header: 'Descrição', accessor: 'descricao' },
       { Header: 'Período', accessor: 'periodo' },
-      { Header: 'Data de Emissão', accessor: 'data_emissao', 
-        Cell: ({ value }) => new Date(value).toLocaleDateString('pt-PT') },
-      { Header: 'Data de Pagamento', accessor: 'data_pagamento', 
-        Cell: ({ value }) => new Date(value).toLocaleDateString('pt-PT') },
-      { 
+      {
+        Header: 'Data de Emissão', accessor: 'data_emissao',
+        Cell: ({ value }) => new Date(value).toLocaleDateString('pt-PT')
+      },
+      {
+        Header: 'Data de Pagamento', accessor: 'data_pagamento',
+        Cell: ({ value }) => new Date(value).toLocaleDateString('pt-PT')
+      },
+      {
         Header: () => (
           <div className="d-flex align-items-center estado-header">
             <span className="dropdown-title">Estado</span>
@@ -152,10 +160,20 @@ const Quotas = () => {
     setShowDeleteModal(true);
   };
 
-  const handleDelete = (id) => {
-    console.log('Excluir quota com o id:', id);
-    setShowDeleteModal(false);
-    // Lógica para excluir a quota
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`/quotas/${id}`);
+      setData((prevData) => prevData.filter(quota => quota.id !== id));
+      setAlertMessage('Quota excluída com sucesso!');
+      setAlertVariant('success');
+    } catch (error) {
+      console.error('Erro ao excluir a quota:', error);
+      setAlertMessage('Erro ao excluir a quota. Tente novamente.');
+      setAlertVariant('danger');
+    } finally {
+      setShowDeleteModal(false);
+      setTimeout(() => setShowAlert(false), 3000);
+    }
   };
 
   const handleGenerateQuota = async (quotaData) => {
@@ -165,7 +183,6 @@ const Quotas = () => {
       setShowAlert(true);
 
       const response = await axios.post('/quotas/emitir', quotaData);
-      // Atualiza o estado com a nova quota adicionada
       setData((prevData) => [...prevData, response.data]);
       setAlertMessage('Quota gerada com sucesso!');
       setAlertVariant('success');
@@ -186,11 +203,30 @@ const Quotas = () => {
 
   const handleCloseConfirmPaymentModal = () => setShowConfirmPaymentModal(false);
 
-  const handleConfirmPayment = (id) => {
-    console.log('Confirmar Pagamento para a Quota ID:', id);
-    setShowConfirmPaymentModal(false);
-    // Lógica para confirmar o pagamento
+  const handleConfirmPayment = async (id) => {
+    try {
+      // Envia uma requisição POST para marcar a quota como paga
+      const response = await axios.post(`/quotas/${id}`);
+
+      // Atualiza o estado para refletir a mudança
+      setData(prevData =>
+        prevData.map(quota =>
+          quota.id === id ? { ...quota, estado: 'Pago' } : quota
+        )
+      );
+
+      setAlertMessage(response.data.message);
+      setAlertVariant('success');
+    } catch (error) {
+      console.error('Erro ao confirmar pagamento:', error);
+      setAlertMessage('Erro ao confirmar pagamento. Tente novamente.');
+      setAlertVariant('danger');
+    } finally {
+      setShowConfirmPaymentModal(false);
+      setTimeout(() => setShowAlert(false), 3000);
+    }
   };
+
 
   return (
     <div>
@@ -244,10 +280,20 @@ const Quotas = () => {
         </Button>
       </div>
       <GenerateQuotaModal show={showGenerateQuotaModal} handleClose={() => setShowGenerateQuotaModal(false)} onGenerate={handleGenerateQuota} />
-      <DeleteQuotaModal show={showDeleteModal} handleClose={() => setShowDeleteModal(false)} onDelete={() => handleDelete(deleteId)} />
-      <ConfirmPaymentModal show={showConfirmPaymentModal} handleClose={handleCloseConfirmPaymentModal} onConfirm={() => handleConfirmPayment(selectedQuotaId)} />
+      <DeleteQuotaModal
+        show={showDeleteModal}
+        handleClose={() => setShowDeleteModal(false)}
+        handleDelete={() => handleDelete(deleteId)}
+      />
+      <ConfirmPaymentModal
+        show={showConfirmPaymentModal}
+        handleClose={handleCloseConfirmPaymentModal}
+        handleConfirmPayment={handleConfirmPayment}
+        quotaId={selectedQuotaId}
+      />
     </div>
   );
 };
 
 export default Quotas;
+
