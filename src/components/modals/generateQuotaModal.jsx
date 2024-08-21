@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { FaList, FaCalendarAlt, FaEuroSign, FaPen } from 'react-icons/fa';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-
+import format from 'date-fns/format';
 
 const GenerateQuotaModal = ({ show, handleClose, handleGenerateQuota }) => {
   const [quotaData, setQuotaData] = useState({
@@ -12,7 +12,7 @@ const GenerateQuotaModal = ({ show, handleClose, handleGenerateQuota }) => {
     periodo: '',
     valor: '',
     descricao: '',
-    prazoPagamento: new Date()
+    data_pagamento: new Date()
   });
 
   const handleChange = (e) => {
@@ -21,12 +21,27 @@ const GenerateQuotaModal = ({ show, handleClose, handleGenerateQuota }) => {
   };
 
   const handleDateChange = (date) => {
-    setQuotaData(prevState => ({ ...prevState, prazoPagamento: date }));
+    // Convertendo a data para string no formato "YYYY-MM-DD"
+    const formattedDate = format(date, 'yyyy-MM-dd');
+    setQuotaData(prevState => ({ ...prevState, data_pagamento: formattedDate }));
   };
 
   const handleSubmit = () => {
-    handleGenerateQuota(quotaData);
-  };
+    // Verifica se data_pagamento é uma string e tenta convertê-la em Date
+    const dataPagamento = typeof quotaData.data_pagamento === 'string'
+        ? new Date(quotaData.data_pagamento)
+        : quotaData.data_pagamento;
+
+    // Formatar a data no formato YYYY-MM-DD
+    const formattedQuotaData = {
+        ...quotaData,
+        data_pagamento: dataPagamento.toISOString().split('T')[0] // Formata a data como "YYYY-MM-DD"
+    };
+
+    handleGenerateQuota(formattedQuotaData);
+    console.log('Quota gerada:', formattedQuotaData);
+};
+
 
   return (
     <Modal show={show} onHide={handleClose} centered>
@@ -89,7 +104,7 @@ const GenerateQuotaModal = ({ show, handleClose, handleGenerateQuota }) => {
             <InputGroup>
               <InputGroup.Text><FaCalendarAlt /></InputGroup.Text>
               <DatePicker
-                selected={quotaData.prazoPagamento}
+                selected={new Date(quotaData.data_pagamento)}
                 onChange={handleDateChange}
                 dateFormat="dd/MM/yyyy"
                 className="form-control"

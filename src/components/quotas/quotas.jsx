@@ -1,15 +1,18 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useTable, usePagination } from 'react-table';
-import { Button, Table, OverlayTrigger, Tooltip, Dropdown } from 'react-bootstrap';
-import { FaCheckCircle, FaTimes, FaTrash, FaPlus, FaCheck} from 'react-icons/fa';
+import { Button, Table, OverlayTrigger, Tooltip, Dropdown, Alert } from 'react-bootstrap';
+import { FaCheckCircle, FaTimes, FaTrash, FaPlus, FaCheck } from 'react-icons/fa';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './quotas.css';
 import GenerateQuotaModal from '../modals/generateQuotaModal';
 import DeleteQuotaModal from '../modals/deleteQuotaModal';
 import ConfirmPaymentModal from '../modals/confirmPaymentModal';
 import 'react-datepicker/dist/react-datepicker.css';
+import axios from '../../api/axios';  // Certifique-se de que está importando o axios correto
+import { useUser } from '../../context/UserContext';
 
 const Quotas = () => {
+  const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -18,45 +21,55 @@ const Quotas = () => {
   const [showConfirmPaymentModal, setShowConfirmPaymentModal] = useState(false);
   const [selectedQuotaId, setSelectedQuotaId] = useState(0);
   const [paymentStatus, setPaymentStatus] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertVariant, setAlertVariant] = useState('success');
+  const [data, setData] = useState([]); // Estado para armazenar os dados das quotas
 
   const handleCloseGenerateQuotaModal = () => setShowGenerateQuotaModal(false);
   const handleShowGenerateQuotaModal = () => setShowGenerateQuotaModal(true);
 
-  const data = useMemo(
-    () => [
-      { id: 1, socio: 'João Silva', descricao: 'Quota Anual 2024', periodo: '2024', prazoPagamento: new Date('2024-12-31'), estado: 'Não Pago', valor: '50€' },
-      { id: 2, socio: 'Maria Oliveira', descricao: 'Quota Mensal Julho 2024', periodo: 'Julho 2024', prazoPagamento: new Date('2024-07-31'), estado: 'Pago', valor: '5€' },
-      { id: 3, socio: 'Carlos Santos', descricao: 'Quota Anual 2024', periodo: '2024', prazoPagamento: new Date('2024-12-31'), estado: 'Não Pago', valor: '50€' },
-      { id: 4, socio: 'Marta Costa', descricao: 'Quota Mensal Julho 2024', periodo: 'Julho 2024', prazoPagamento: new Date('2024-07-31'), estado: 'Pago', valor: '5€' },
-      { id: 5, socio: 'Ana Rodrigues', descricao: 'Quota Anual 2024', periodo: '2024', prazoPagamento: new Date('2024-12-31'), estado: 'Não Pago', valor: '50€' },
-      { id: 6, socio: 'José Pereira', descricao: 'Quota Mensal Julho 2024', periodo: 'Julho 2024', prazoPagamento: new Date('2024-07-31'), estado: 'Pago', valor: '5€' },
-      { id: 7, socio: 'Rita Gomes', descricao: 'Quota Anual 2024', periodo: '2024', prazoPagamento: new Date('2024-12-31'), estado: 'Não Pago', valor: '50€' },
-      { id: 8, socio: 'Pedro Almeida', descricao: 'Quota Mensal Julho 2024', periodo: 'Julho 2024', prazoPagamento: new Date('2024-07-31'), estado: 'Pago', valor: '5€' },
-      { id: 9, socio: 'Inês Lopes', descricao: 'Quota Anual 2024', periodo: '2024', prazoPagamento: new Date('2024-12-31'), estado: 'Não Pago', valor: '50€' },
-      { id: 10, socio: 'Miguel Ferreira', descricao: 'Quota Mensal Julho 2024', periodo: 'Julho 2024', prazoPagamento: new Date('2024-07-31'), estado: 'Pago', valor: '5€' },
-      { id: 11, socio: 'Sara Costa', descricao: 'Quota Anual 2024', periodo: '2024', prazoPagamento: new Date('2024-12-31'), estado: 'Não Pago', valor: '50€' },
-      { id: 12, socio: 'Vasco Santos', descricao: 'Quota Mensal Julho 2024', periodo: 'Julho 2024', prazoPagamento: new Date('2024-07-31'), estado: 'Pago', valor: '5€' },
-      { id: 13, socio: 'Catarina Silva', descricao: 'Quota Anual 2024', periodo: '2024', prazoPagamento: new Date('2024-12-31'), estado: 'Não Pago', valor: '50€' },
-      { id: 14, socio: 'Ricardo Oliveira', descricao: 'Quota Mensal Julho 2024', periodo: 'Julho 2024', prazoPagamento: new Date('2024-07-31'), estado: 'Pago', valor: '5€' },
-    ],
-    []
-  );
+  useEffect(() => {
+    const fetchQuotas = async () => {
+      try {
+        const response = await axios.get('/quotas');
+        // Acesso a propriedade 'quotas' que é um array
+        if (response.data && Array.isArray(response.data.quotas)) {
+          setData(response.data.quotas);
+        } else {
+          console.error('Resposta da API não contém uma lista de quotas:', response.data);
+          setAlertMessage('Erro na resposta da API. Tente novamente.');
+          setAlertVariant('danger');
+          setShowAlert(true);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar quotas:', error);
+        setAlertMessage('Erro ao buscar quotas. Tente novamente.');
+        setAlertVariant('danger');
+        setShowAlert(true);
+      }
+    };
+
+    fetchQuotas();
+  }, []);
 
   const columns = useMemo(
     () => [
       { Header: 'ID', accessor: 'id' },
-      { Header: 'Sócio', accessor: 'socio' },
+      { Header: 'Sócio', accessor: 'socio_id' },
       { Header: 'Descrição', accessor: 'descricao' },
       { Header: 'Período', accessor: 'periodo' },
-      { Header: 'Prazo de Pagamento', accessor: 'prazoPagamento', 
-        Cell: ({ value }) => value.toLocaleDateString('pt-PT') },
+      { Header: 'Data de Emissão', accessor: 'data_emissao', 
+        Cell: ({ value }) => new Date(value).toLocaleDateString('pt-PT') },
+      { Header: 'Data de Pagamento', accessor: 'data_pagamento', 
+        Cell: ({ value }) => new Date(value).toLocaleDateString('pt-PT') },
       { 
         Header: () => (
           <div className="d-flex align-items-center estado-header">
             <span className="dropdown-title">Estado</span>
             <Dropdown onSelect={(eventKey) => setPaymentStatus(eventKey)} className="custom-dropdown">
               <Dropdown.Toggle variant="link" id="dropdown-basic" className="custom-dropdown-toggle">
-
+                {paymentStatus || 'Todos'}
               </Dropdown.Toggle>
               <Dropdown.Menu className="custom-dropdown-menu">
                 <Dropdown.Item eventKey="">Todos</Dropdown.Item>
@@ -122,10 +135,15 @@ const Quotas = () => {
   );
 
   useEffect(() => {
-    const results = data.filter(quota =>
-      (paymentStatus === '' || quota.estado === paymentStatus) &&
-      quota.socio.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Filtra os dados com base no searchTerm e paymentStatus
+    const results = data.filter(quota => {
+      const socioId = quota.socio_id ? quota.socio_id.toString() : '';
+      const lowerSearchTerm = searchTerm ? searchTerm.toLowerCase() : '';
+      return (
+        (paymentStatus === '' || quota.estado === paymentStatus) &&
+        socioId.includes(lowerSearchTerm)
+      );
+    });
     setFilteredData(results);
   }, [searchTerm, data, paymentStatus]);
 
@@ -140,10 +158,25 @@ const Quotas = () => {
     // Lógica para excluir a quota
   };
 
-  const handleGenerateQuota = (quotaData) => {
-    console.log('Gerar nova quota:', quotaData);
-    handleCloseGenerateQuotaModal();
-    // Lógica para gerar nova quota
+  const handleGenerateQuota = async (quotaData) => {
+    try {
+      setAlertMessage('Gerando nova quota...');
+      setAlertVariant('info');
+      setShowAlert(true);
+
+      const response = await axios.post('/quotas/emitir', quotaData);
+      // Atualiza o estado com a nova quota adicionada
+      setData((prevData) => [...prevData, response.data]);
+      setAlertMessage('Quota gerada com sucesso!');
+      setAlertVariant('success');
+    } catch (error) {
+      console.error('Erro ao gerar a quota:', error);
+      setAlertMessage('Erro ao gerar a quota. Tente novamente.');
+      setAlertVariant('danger');
+    } finally {
+      handleCloseGenerateQuotaModal();
+      setTimeout(() => setShowAlert(false), 3000);
+    }
   };
 
   const handleShowConfirmPaymentModal = (id) => {
@@ -154,18 +187,20 @@ const Quotas = () => {
   const handleCloseConfirmPaymentModal = () => setShowConfirmPaymentModal(false);
 
   const handleConfirmPayment = (id) => {
-    console.log('Confirmar Pagomento para a Quota ID:', id);
+    console.log('Confirmar Pagamento para a Quota ID:', id);
     setShowConfirmPaymentModal(false);
+    // Lógica para confirmar o pagamento
   };
 
   return (
     <div>
+      {showAlert && <Alert variant={alertVariant}>{alertMessage}</Alert>}
       <div className="d-flex justify-content-between align-items-center mb-2 mt-1">
-        <button className="btn btn-custom" onClick={handleShowGenerateQuotaModal}>
+        <Button variant="primary" onClick={() => setShowGenerateQuotaModal(true)}>
           <FaPlus className="mr-2" /> Gerar Quota
-        </button>
+        </Button>
         <div className="d-flex align-items-center">
-          <label className="mr-2 me-2">Pesquisar:</label>
+          <label className="mr-2">Pesquisar:</label>
           <div className="input-group">
             <input
               type="text"
@@ -188,50 +223,29 @@ const Quotas = () => {
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {page.map((row, i) => {
+          {page.map(row => {
             prepareRow(row);
             return (
               <tr {...row.getRowProps()}>
-                {row.cells.map(cell => {
-                  return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
-                })}
+                {row.cells.map(cell => (
+                  <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                ))}
               </tr>
             );
           })}
         </tbody>
       </Table>
-      <div className="d-flex justify-content-between align-items-center mt-3">
-        <div>
-          <Button style={{ marginRight: '10px' }} onClick={() => previousPage()} disabled={!canPreviousPage}>
-            Página Anterior
-          </Button>
-          <Button onClick={() => nextPage()} disabled={!canNextPage}>
-            Próxima página
-          </Button>
-        </div>
-        <div className="result-count ml-auto">
-          {filteredData.length} resultados encontrados
-        </div>
+      <div className="pagination-controls">
+        <Button onClick={() => previousPage()} disabled={!canPreviousPage}>
+          Anterior
+        </Button>
+        <Button onClick={() => nextPage()} disabled={!canNextPage}>
+          Próxima
+        </Button>
       </div>
-
-      <ConfirmPaymentModal
-        show={showConfirmPaymentModal}
-        handleClose={handleCloseConfirmPaymentModal}
-        handleConfirmPayment={handleConfirmPayment}
-        quotaId={selectedQuotaId}
-      />
-
-      <GenerateQuotaModal
-        show={showGenerateQuotaModal}
-        handleClose={handleCloseGenerateQuotaModal}
-        handleGenerateQuota={handleGenerateQuota}
-      />
-
-      <DeleteQuotaModal
-        show={showDeleteModal}
-        handleClose={() => setShowDeleteModal(false)}
-        handleDelete={() => handleDelete(deleteId)}
-      />
+      <GenerateQuotaModal show={showGenerateQuotaModal} handleClose={() => setShowGenerateQuotaModal(false)} onGenerate={handleGenerateQuota} />
+      <DeleteQuotaModal show={showDeleteModal} handleClose={() => setShowDeleteModal(false)} onDelete={() => handleDelete(deleteId)} />
+      <ConfirmPaymentModal show={showConfirmPaymentModal} handleClose={handleCloseConfirmPaymentModal} onConfirm={() => handleConfirmPayment(selectedQuotaId)} />
     </div>
   );
 };
