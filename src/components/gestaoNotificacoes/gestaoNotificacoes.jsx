@@ -1,31 +1,50 @@
-import React, { useState } from 'react';
-import { Container, Row, Col, Table, Button, Modal, Form, Card, Pagination } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Table, Button, Modal, Form, Card, Pagination, Alert } from 'react-bootstrap';
+import axios from '../../api/axios'; // Usando o axios configurado
+import { useUser } from '../../context/UserContext'; // Usando o UserContext
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './gestaoNotificacoes.css';
 
 const GestaoNotificacoes = () => {
-  const [socios, setSocios] = useState([
-    { id: 1, nome: 'João Silva', email: 'joao.silva@example.com', statusQuota: 'Em atraso', descricao: 'Quota Anual 2024', prazoPagamento: new Date('2024-12-31'), valor: '50€' },
-    { id: 2, nome: 'Maria Oliveira', email: 'maria.oliveira@example.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
-    { id: 3, nome: 'José Pereira', email: 'modus@gmail.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
-    { id: 4, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
-    { id: 5, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
-    { id: 6, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
-    { id: 7, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
-    { id: 8, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
-    { id: 9, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
-    { id: 10, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
-    { id: 11, nome: 'Ana Santos', email: 'aninha@gmail.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
-    { id: 12, nome: 'Rui Santos', email: 'rui@gmail.com', statusQuota: 'Em atraso', descricao: 'Quota Mensal Julho 2024', prazoPagamento: new Date('2024-07-31'), valor: '5€' },
-
-
-  ]);
-
+  const { user } = useUser(); // Obtendo o usuário autenticado
+  const [socios, setSocios] = useState([]);
   const [selectedSocios, setSelectedSocios] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
+
+  // Fetch quotas em atraso da API
+  useEffect(() => {
+    const fetchQuotasEmAtraso = async () => {
+      try {
+        const response = await axios.get('/quotas/atraso');
+        setSocios(response.data.quotas);
+      } catch (error) {
+        console.error('Erro ao buscar quotas em atraso:', error);
+      }
+    };
+
+    fetchQuotasEmAtraso();
+  }, [user]); 
+
+  const filteredSocios = socios.filter(
+    (socio) =>
+      (socio.socio.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        socio.socio.email.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
+  const indexOfLastSocio = currentPage * itemsPerPage;
+  const indexOfFirstSocio = indexOfLastSocio - itemsPerPage;
+  const currentSocios = filteredSocios.slice(indexOfFirstSocio, indexOfLastSocio);
+
+  const totalPages = Math.ceil(filteredSocios.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   const handleSelectSocio = (socio) => {
     setSelectedSocios((prevSelected) =>
@@ -43,23 +62,32 @@ const GestaoNotificacoes = () => {
     }
   };
 
-  const handleSendNotification = () => {
-    console.log('Notificações enviadas para:', selectedSocios);
-    setShowModal(false);
-  };
+  // Novo método para enviar notificações
+  const handleSendNotification = async () => {
+    const quotaIds = selectedSocios.map((quota) => quota.id);
 
-  const filteredSocios = socios.filter(
-    (socio) =>
-      (socio.nome.toLowerCase().includes(searchTerm.toLowerCase()) || socio.email.toLowerCase().includes(searchTerm.toLowerCase())));
+    try {
+      const response = await axios.post('/notificacoes/send', {
+        quota_ids: quotaIds
+      });
 
-  const indexOfLastSocio = currentPage * itemsPerPage;
-  const indexOfFirstSocio = indexOfLastSocio - itemsPerPage;
-  const currentSocios = filteredSocios.slice(indexOfFirstSocio, indexOfLastSocio);
+      console.log('Resposta do servidor:', response.data);
 
-  const totalPages = Math.ceil(filteredSocios.length / itemsPerPage);
+      // Mostrar mensagem de sucesso
+      setShowSuccessAlert(true);
+      setShowErrorAlert(false);
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+      // Limpar seleção após envio
+      setSelectedSocios([]);
+    } catch (error) {
+      console.error('Erro ao enviar notificações:', error);
+
+      // Mostrar mensagem de erro
+      setShowErrorAlert(true);
+      setShowSuccessAlert(false);
+    } finally {
+      setShowModal(false); // Fechar o modal
+    }
   };
 
   return (
@@ -74,6 +102,20 @@ const GestaoNotificacoes = () => {
               </Card.Text>
             </Card.Body>
           </Card>
+
+          {/* Alerta de Sucesso */}
+          {showSuccessAlert && (
+            <Alert variant="success" onClose={() => setShowSuccessAlert(false)} dismissible>
+              Notificações enviadas com sucesso!
+            </Alert>
+          )}
+
+          {/* Alerta de Erro */}
+          {showErrorAlert && (
+            <Alert variant="danger" onClose={() => setShowErrorAlert(false)} dismissible>
+              Ocorreu um erro ao enviar as notificações. Por favor, tente novamente.
+            </Alert>
+          )}
 
           <div className="d-flex justify-content-end mb-3">
             <Form.Control
@@ -105,28 +147,34 @@ const GestaoNotificacoes = () => {
               </tr>
             </thead>
             <tbody>
-              {currentSocios.map((socio) => (
-                <tr key={socio.id}>
+              {currentSocios.map((quota) => (
+                <tr key={quota.id}>
                   <td>
                     <Form.Check
                       type="checkbox"
-                      checked={selectedSocios.includes(socio)}
-                      onChange={() => handleSelectSocio(socio)}
+                      checked={selectedSocios.includes(quota)}
+                      onChange={() => handleSelectSocio(quota)}
                     />
                   </td>
-                  <td>{socio.nome}</td>
-                  <td>{socio.email}</td>
-                  <td>{socio.descricao}</td>
-                  <td>{socio.prazoPagamento.toLocaleDateString('pt-PT')}</td>
-                  <td>{socio.valor}</td>
-                  <td>{socio.statusQuota}</td>
+                  <td>{quota.socio.nome}</td>
+                  <td>{quota.socio.email}</td>
+                  <td>{quota.descricao}</td>
+                  <td>{new Date(quota.data_pagamento).toLocaleDateString('pt-PT')}</td>
+                  <td>{quota.valor}</td>
+                  <td>{quota.estado}</td>
                 </tr>
               ))}
             </tbody>
           </Table>
 
-          <div className="d-flex justify-content-center">
+          <div className="d-flex justify-content-center my-3">
             <Pagination>
+              <Pagination.Prev 
+                onClick={() => handlePageChange(currentPage - 1)} 
+                disabled={currentPage === 1}
+              >
+                Anterior
+              </Pagination.Prev>
               {Array.from({ length: totalPages }, (_, index) => (
                 <Pagination.Item
                   key={index + 1}
@@ -136,6 +184,12 @@ const GestaoNotificacoes = () => {
                   {index + 1}
                 </Pagination.Item>
               ))}
+              <Pagination.Next 
+                onClick={() => handlePageChange(currentPage + 1)} 
+                disabled={currentPage === totalPages}
+              >
+                Próximo
+              </Pagination.Next>
             </Pagination>
           </div>
 
@@ -158,8 +212,8 @@ const GestaoNotificacoes = () => {
         <Modal.Body>
           Tem certeza de que deseja enviar notificações para os seguintes sócios?
           <ul>
-            {selectedSocios.map((socio) => (
-              <li key={socio.id}>{socio.nome} ({socio.email})</li>
+            {selectedSocios.map((quota) => (
+              <li key={quota.id}>{quota.socio.nome} ({quota.socio.email})</li>
             ))}
           </ul>
         </Modal.Body>
