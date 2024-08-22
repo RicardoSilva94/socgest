@@ -1,38 +1,36 @@
-// components/modals/EditSocioModal.jsx
-
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import { FaUser, FaIdCard, FaPhone, FaEnvelope, FaMapMarkerAlt, FaStickyNote } from 'react-icons/fa';
 
 const EditSocioModal = ({ show, handleClose, handleEditSocio, socio }) => {
   const [nome, setNome] = useState('');
-  const [num_socio, setnum_socio] = useState('');
   const [nif, setNif] = useState('');
   const [telefone, setTelefone] = useState('');
   const [email, setEmail] = useState('');
   const [morada, setMorada] = useState('');
   const [notas, setNotas] = useState('');
+  const [estado, setEstado] = useState('');
 
   useEffect(() => {
     if (socio) {
       setNome(socio.nome);
-      setnum_socio(socio.num_socio);
       setNif(socio.nif);
       setTelefone(socio.telefone);
       setEmail(socio.email);
       setMorada(socio.morada);
       setNotas(socio.notas);
+      setEstado(socio.estado);
     }
   }, [socio]);
 
   const resetForm = () => {
     setNome('');
-    setnum_socio('');
     setNif('');
     setTelefone('');
     setEmail('');
     setMorada('');
     setNotas('');
+    setEstado('');
   };
 
   return (
@@ -53,18 +51,7 @@ const EditSocioModal = ({ show, handleClose, handleEditSocio, socio }) => {
           </Form.Group>
           <Row>
             <Col>
-              <Form.Group controlId="formnum_socio" className='mb-3'>
-                <Form.Label><FaIdCard className="icon" /> Nº de Sócio</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Nº de sócio"
-                  value={num_socio}
-                  onChange={(e) => setnum_socio(e.target.value)}
-                />
-              </Form.Group>
-            </Col>
-            <Col>
-              <Form.Group controlId="formNif">
+              <Form.Group controlId="formNif" className='mb-3'>
                 <Form.Label><FaIdCard className="icon" /> NIF</Form.Label>
                 <Form.Control
                   type="text"
@@ -74,10 +61,27 @@ const EditSocioModal = ({ show, handleClose, handleEditSocio, socio }) => {
                 />
               </Form.Group>
             </Col>
+            <Col>
+              <Form.Group controlId="formEstado" className='mb-3'>
+                <Form.Label>Estado</Form.Label>
+                <Form.Control
+                  as="select"
+                  value={estado}
+                  onChange={(e) => setEstado(e.target.value)}
+                >
+                  <option value="">Selecione o estado</option>
+                  <option value="Activo">Activo</option>
+                  <option value="Desistiu">Desistiu</option>
+                  <option value="Faleceu">Faleceu</option>
+                  <option value="Expulso">Expulso</option>
+                  <option value="Suspenso">Suspenso</option>
+                </Form.Control>
+              </Form.Group>
+            </Col>
           </Row>
           <Row>
             <Col>
-              <Form.Group controlId="formtelefone" className='mb-3'>
+              <Form.Group controlId="formTelefone" className='mb-3'>
                 <Form.Label><FaPhone className="icon" /> Telemóvel</Form.Label>
                 <Form.Control
                   type="text"
@@ -88,7 +92,7 @@ const EditSocioModal = ({ show, handleClose, handleEditSocio, socio }) => {
               </Form.Group>
             </Col>
             <Col>
-              <Form.Group controlId="formEmail">
+              <Form.Group controlId="formEmail" className='mb-3'>
                 <Form.Label><FaEnvelope className="icon" /> Email</Form.Label>
                 <Form.Control
                   type="email"
@@ -109,7 +113,7 @@ const EditSocioModal = ({ show, handleClose, handleEditSocio, socio }) => {
               onChange={(e) => setMorada(e.target.value)}
             />
           </Form.Group>
-          <Form.Group controlId="formNotas">
+          <Form.Group controlId="formNotas" className='mb-3'>
             <Form.Label><FaStickyNote className="icon" /> Notas</Form.Label>
             <Form.Control
               as="textarea"
@@ -132,12 +136,12 @@ const EditSocioModal = ({ show, handleClose, handleEditSocio, socio }) => {
           handleEditSocio({
             id: socio.id,
             nome,
-            num_socio,
             nif,
             telefone,
             email,
             morada,
-            notas
+            notas,
+            estado
           });
           handleClose();
           resetForm();
