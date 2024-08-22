@@ -21,19 +21,20 @@ const GestaoNotificacoes = () => {
     const fetchQuotasEmAtraso = async () => {
       try {
         const response = await axios.get('/quotas/atraso');
-        setSocios(response.data.quotas);
+        // Verificação se a resposta contém quotas
+        setSocios(response.data.quotas || []);
       } catch (error) {
         console.error('Erro ao buscar quotas em atraso:', error);
       }
     };
 
     fetchQuotasEmAtraso();
-  }, [user]); 
+  }, [user]);
 
   const filteredSocios = socios.filter(
     (socio) =>
-      (socio.socio.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        socio.socio.email.toLowerCase().includes(searchTerm.toLowerCase()))
+      socio.socio.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      socio.socio.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const indexOfLastSocio = currentPage * itemsPerPage;
@@ -128,80 +129,87 @@ const GestaoNotificacoes = () => {
             />
           </div>
 
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>
-                  <Form.Check 
-                    type="checkbox" 
-                    checked={selectedSocios.length === filteredSocios.length} 
-                    onChange={handleSelectAll} 
-                  />
-                </th>
-                <th>Nome</th>
-                <th>Email</th>
-                <th>Descrição</th>
-                <th>Prazo de Pagamento</th>
-                <th>Valor</th>
-                <th>Status da Quota</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentSocios.map((quota) => (
-                <tr key={quota.id}>
-                  <td>
-                    <Form.Check
-                      type="checkbox"
-                      checked={selectedSocios.includes(quota)}
-                      onChange={() => handleSelectSocio(quota)}
-                    />
-                  </td>
-                  <td>{quota.socio.nome}</td>
-                  <td>{quota.socio.email}</td>
-                  <td>{quota.descricao}</td>
-                  <td>{new Date(quota.data_pagamento).toLocaleDateString('pt-PT')}</td>
-                  <td>{quota.valor}</td>
-                  <td>{quota.estado}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
+          {/* Renderizar tabela somente se houver sócios */}
+          {socios.length > 0 ? (
+            <>
+              <Table striped bordered hover>
+                <thead>
+                  <tr>
+                    <th>
+                      <Form.Check 
+                        type="checkbox" 
+                        checked={selectedSocios.length === filteredSocios.length} 
+                        onChange={handleSelectAll} 
+                      />
+                    </th>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Descrição</th>
+                    <th>Prazo de Pagamento</th>
+                    <th>Valor</th>
+                    <th>Status da Quota</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentSocios.map((quota) => (
+                    <tr key={quota.id}>
+                      <td>
+                        <Form.Check
+                          type="checkbox"
+                          checked={selectedSocios.includes(quota)}
+                          onChange={() => handleSelectSocio(quota)}
+                        />
+                      </td>
+                      <td>{quota.socio.nome}</td>
+                      <td>{quota.socio.email}</td>
+                      <td>{quota.descricao}</td>
+                      <td>{new Date(quota.data_pagamento).toLocaleDateString('pt-PT')}</td>
+                      <td>{quota.valor}</td>
+                      <td>{quota.estado}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
 
-          <div className="d-flex justify-content-center my-3">
-            <Pagination>
-              <Pagination.Prev 
-                onClick={() => handlePageChange(currentPage - 1)} 
-                disabled={currentPage === 1}
-              >
-                Anterior
-              </Pagination.Prev>
-              {Array.from({ length: totalPages }, (_, index) => (
-                <Pagination.Item
-                  key={index + 1}
-                  active={index + 1 === currentPage}
-                  onClick={() => handlePageChange(index + 1)}
+              <div className="d-flex justify-content-center my-3">
+                <Pagination>
+                  <Pagination.Prev 
+                    onClick={() => handlePageChange(currentPage - 1)} 
+                    disabled={currentPage === 1}
+                  >
+                    Anterior
+                  </Pagination.Prev>
+                  {Array.from({ length: totalPages }, (_, index) => (
+                    <Pagination.Item
+                      key={index + 1}
+                      active={index + 1 === currentPage}
+                      onClick={() => handlePageChange(index + 1)}
+                    >
+                      {index + 1}
+                    </Pagination.Item>
+                  ))}
+                  <Pagination.Next 
+                    onClick={() => handlePageChange(currentPage + 1)} 
+                    disabled={currentPage === totalPages}
+                  >
+                    Próximo
+                  </Pagination.Next>
+                </Pagination>
+              </div>
+
+              <div className="text-center">
+                <Button
+                  variant="primary"
+                  disabled={selectedSocios.length === 0}
+                  onClick={() => setShowModal(true)}
                 >
-                  {index + 1}
-                </Pagination.Item>
-              ))}
-              <Pagination.Next 
-                onClick={() => handlePageChange(currentPage + 1)} 
-                disabled={currentPage === totalPages}
-              >
-                Próximo
-              </Pagination.Next>
-            </Pagination>
-          </div>
-
-          <div className="text-center">
-            <Button
-              variant="primary"
-              disabled={selectedSocios.length === 0}
-              onClick={() => setShowModal(true)}
-            >
-              Enviar Notificações
-            </Button>
-          </div>
+                  Enviar Notificações
+                </Button>
+              </div>
+            </>
+          ) : (
+            <p className="text-center">Nenhum sócio com quotas em atraso encontrado.</p>
+          )}
         </Col>
       </Row>
 
