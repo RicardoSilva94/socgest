@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
-import { FaUser, FaIdCard, FaPhone, FaEnvelope, FaMapMarkerAlt, FaStickyNote } from 'react-icons/fa';
+import { FaUser, FaIdCard, FaPhone, FaEnvelope, FaMapMarkerAlt, FaStickyNote, FaUniversalAccess } from 'react-icons/fa';
 
 const EditSocioModal = ({ show, handleClose, handleEditSocio, socio }) => {
   const [nome, setNome] = useState('');
@@ -63,7 +63,7 @@ const EditSocioModal = ({ show, handleClose, handleEditSocio, socio }) => {
             </Col>
             <Col>
               <Form.Group controlId="formEstado" className='mb-3'>
-                <Form.Label>Estado</Form.Label>
+                <Form.Label><FaUniversalAccess/> Estado</Form.Label>
                 <Form.Control
                   as="select"
                   value={estado}

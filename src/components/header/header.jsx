@@ -32,12 +32,28 @@ export default function AppHeader() {
   
   const handleScrollToSection = (event, sectionId) => {
     event.preventDefault();
-    const yOffset = -70; // Offset para ajustar a posição do scroll
-    const element = document.getElementById(sectionId);
-    const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-
-    window.scrollTo({ top: y, behavior: 'smooth' });
+    
+    // Verifica se o usuário está na home page
+    if (window.location.pathname !== '/') {
+      history.push('/'); // Redireciona para a home page
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          const yOffset = -70;
+          const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+      }, 100);
+    } else {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        const yOffset = -70;
+        const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    }
   };
+  
 
   // Estado para controlar a exibição do modal de login
   const [showLoginModal, setShowLoginModal] = useState(false);
