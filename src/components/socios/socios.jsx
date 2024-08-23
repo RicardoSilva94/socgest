@@ -108,30 +108,28 @@ const Socios = () => {
   );
 
   const fetchSocios = async () => {
-    if (!entidadeId) {
-      setAlertMessage('Entidade não encontrada. Certifique-se de criar primeiro uma Entidade');
-      setAlertVariant('danger');
-      setShowAlert(true);
-      return;
-    }
 
     try {
-      const response = await axios.get(`/socios?entidade_id=${entidadeId}`);
-      const sociosData = response.data.socios;
-      if (Array.isArray(sociosData)) {
-        setSocios(sociosData);
-        setFilteredData(sociosData);
-      } else {
-        console.error('Os dados retornados não são um array:', sociosData);
-      }
+        const response = await axios.get(`/socios`); // Não é necessário passar entidade_id
+        const sociosData = response.data.socios;
+        if (Array.isArray(sociosData)) {
+            setSocios(sociosData);
+            setFilteredData(sociosData);
+        } else {
+            console.error('Os dados retornados não são um array:', sociosData);
+        }
     } catch (error) {
-      console.error('Erro ao buscar sócios:', error);
-      setAlertMessage('Erro ao buscar sócios. Por favor, tente novamente.');
-      setAlertVariant('danger');
-      setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 3000);
+        console.error('Erro ao buscar sócios:', error);
+        setAlertMessage('Erro ao buscar sócios. Por favor, tente novamente.');
+        setAlertVariant('danger');
+        setShowAlert(true);
+        setTimeout(() => setShowAlert(false), 3000);
     }
-  };
+};
+useEffect(() => {
+    fetchSocios();
+}, [entidadeId]);
+
 
   useEffect(() => {
     const results = socios.filter(socio =>

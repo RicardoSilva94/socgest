@@ -22,7 +22,6 @@ const Entidade = () => {
   const [showModal, setShowModal] = useState(false); // Controle da exibição do modal
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [entidadeId, setEntidadeId] = useState(null);
 
   // Função para buscar dados da API
