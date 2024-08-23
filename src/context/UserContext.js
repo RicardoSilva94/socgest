@@ -4,10 +4,15 @@ import axios from '../api/axios';
 const UserContext = createContext();
 
 export function UserProvider({ children }) {
+  const [entidadeId, setEntidadeId] = useState(null);
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('user');
+    console.log('Usuário salvo no localStorage:', savedUser);
+    
     return savedUser ? JSON.parse(savedUser) : null;
   });
+
+
 
   useEffect(() => {
     if (user) {
@@ -27,7 +32,7 @@ export function UserProvider({ children }) {
   console.log('UserProvider user state:', user);
 
   return (
-    <UserContext.Provider value={{ user, setUser, logout }}>
+    <UserContext.Provider value={{ user, setUser, entidadeId, setEntidadeId,logout }}>
       {children}
     </UserContext.Provider>
   );

@@ -11,7 +11,7 @@ import axios from '../../api/axios';
 import { useUser } from '../../context/UserContext';
 
 const Socios = () => {
-  const { user } = useUser();
+  const { entidadeId, setEntidadeId } = useUser();
   const [searchTerm, setSearchTerm] = useState('');
   const [socios, setSocios] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -23,8 +23,25 @@ const Socios = () => {
   const [selectedSocio, setSelectedSocio] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
-  const [alertVariant, setAlertVariant] = useState('success'); 
+  const [alertVariant, setAlertVariant] = useState('success');
 
+  useEffect(() => {
+    const fetchEntidadeId = async () => {
+      try {
+        const response = await axios.get('/entidade-id'); // Chama a API para obter o ID da entidade
+        setEntidadeId(response.data.id); // Armazena o ID da entidade no contexto
+      } catch (error) {
+        console.error('Erro ao obter o ID da entidade:', error);
+        setAlertMessage('Erro ao obter a entidade. Certifique-se de que criou uma entidade em primeiro lugar');
+        setAlertVariant('danger');
+        setShowAlert(true);
+      }
+    };
+
+    fetchEntidadeId();
+  }, []);
+
+  // Função para fechar os modais
   const handleCloseAddSocioModal = () => setShowAddSocioModal(false);
   const handleCloseEditSocioModal = () => setShowEditSocioModal(false);
   const handleShowAddSocioModal = () => setShowAddSocioModal(true);
@@ -32,12 +49,12 @@ const Socios = () => {
     setSelectedSocio(socio);
     setShowEditSocioModal(true);
   };
-
   const handleShowViewSocioModal = (socio) => {
     setSelectedSocio(socio);
     setShowViewSocioModal(true);
   };
 
+  // Definir colunas da tabela
   const columns = useMemo(
     () => [
       { Header: 'Nome', accessor: 'nome' },
@@ -91,8 +108,15 @@ const Socios = () => {
   );
 
   const fetchSocios = async () => {
+    if (!entidadeId) {
+      setAlertMessage('Entidade não encontrada. Certifique-se de criar primeiro uma Entidade');
+      setAlertVariant('danger');
+      setShowAlert(true);
+      return;
+    }
+
     try {
-      const response = await axios.get('/socios');
+      const response = await axios.get(`/socios?entidade_id=${entidadeId}`);
       const sociosData = response.data.socios;
       if (Array.isArray(sociosData)) {
         setSocios(sociosData);
@@ -110,10 +134,6 @@ const Socios = () => {
   };
 
   useEffect(() => {
-    fetchSocios();
-  }, []);
-
-  useEffect(() => {
     const results = socios.filter(socio =>
       socio.nome.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -122,9 +142,9 @@ const Socios = () => {
 
   const handleAddSocio = async (socioData) => {
     try {
-      const response = await axios.post('/socios', { 
-        ...socioData, 
-        entidade_id: user.entidade_id 
+      const response = await axios.post('/socios', {
+        ...socioData,
+        entidade_id: entidadeId
       });
       console.log('Resposta da API:', response.data);
 
@@ -268,6 +288,7 @@ const Socios = () => {
         show={showAddSocioModal}
         handleClose={handleCloseAddSocioModal}
         handleAddSocio={handleAddSocio}
+        entidadeId={entidadeId}
       />
       <EditSocioModal
         show={showEditSocioModal}

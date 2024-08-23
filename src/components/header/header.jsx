@@ -21,7 +21,6 @@ export default function AppHeader() {
   const { user, setUser, logout } = useUser();
   console.log('AppHeader user:', user); // Debugging line
 
-  const [authenticatedUser, setAuthenticatedUser] = useState(null);
 
   const handleNavigateHome = (event) => {
     history.push('/');
@@ -33,7 +32,7 @@ export default function AppHeader() {
   const handleScrollToSection = (event, sectionId) => {
     event.preventDefault();
     
-    // Verifica se o usuário está na home page
+    // Verifica se o user está na home page
     if (window.location.pathname !== '/') {
       history.push('/'); // Redireciona para a home page
       setTimeout(() => {
@@ -76,7 +75,6 @@ export default function AppHeader() {
   const handleLogin = (userData) => {
     console.log('Handle login called with:', userData); // Debugging line
     setUser(userData); 
-    setAuthenticatedUser(userData);
     handleCloseLogin(); // Fecha o modal de login após o login bem-sucedido
   };
 

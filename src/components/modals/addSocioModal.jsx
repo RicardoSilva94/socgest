@@ -3,7 +3,7 @@ import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import { FaUser, FaIdCard, FaPhone, FaEnvelope, FaMapMarkerAlt, FaStickyNote, FaUniversalAccess } from 'react-icons/fa';
 import { MdArrowDropDown } from 'react-icons/md'; // Ícone da seta
 
-const AddSocioModal = ({ show, handleClose, handleAddSocio }) => {
+const AddSocioModal = ({ show, handleClose, handleAddSocio, entidadeId }) => {
   const [nome, setNome] = useState('');
   const [nif, setNif] = useState('');
   const [telefone, setTelefone] = useState('');

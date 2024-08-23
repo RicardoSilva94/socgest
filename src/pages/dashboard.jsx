@@ -20,8 +20,8 @@ const Dashboard = () => {
               {/* Incorporar o vídeo do YouTube */}
               <div className="video-container">
                 <iframe
-                  width="560"
-                  height="315"
+                  width="800"
+                  height="455"
                   src="https://www.youtube.com/embed/HbMK0pu3O9k?si=rKedj4KjGmk9m0Xc"
                   title="Tutorial sobre o website"
                   frameBorder="0"

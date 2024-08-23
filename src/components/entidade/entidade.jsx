@@ -22,6 +22,7 @@ const Entidade = () => {
   const [showModal, setShowModal] = useState(false); // Controle da exibição do modal
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [entidadeId, setEntidadeId] = useState(null);
 
   // Função para buscar dados da API
@@ -29,7 +30,6 @@ const Entidade = () => {
     const fetchData = async () => {
       try {
         if (user && user.id) { // Verifica se o user está disponível
-          console.log('Carregando dados da entidade para o user:', user.id);
           const response = await axios.get(`/entidades/${user.id}`); // Usa o userId na URL
           console.log('Dados da entidade:', response);
 
@@ -55,7 +55,7 @@ const Entidade = () => {
     };
 
     fetchData();
-  }, [user]);
+  }, [user, setEntidadeId]);
 
   // Função para lidar com mudanças nos campos de formulário
   const handleChange = (e) => {
@@ -66,11 +66,6 @@ const Entidade = () => {
   // Função para lidar com o envio do formulário
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Dados do formulário:', entidadeData);
-    if (!entidadeData.tipo_quota || !entidadeData.valor_quota) {
-      setErrorMessage('Tipo de quota e valor da quota são obrigatórios.');
-      return;
-    }
 
     try {
       const formData = new FormData();
@@ -85,8 +80,8 @@ const Entidade = () => {
       }
 
       const url = entidadeId ? `/entidades/${entidadeId}` : '/entidades';
-      console.log('URL da solicitação:', url);
       const method = entidadeId ? 'put' : 'post';
+      
 
       const response = await axios({
         method,
@@ -271,6 +266,7 @@ const Entidade = () => {
                     onChange={handleChange}
                     style={{ flex: 1 }}
                     readOnly={!isEditable}
+                    required
                   />
                 </Form.Group>
                 <Row className="mb-3">

@@ -56,7 +56,7 @@ export default function RegisterModal({ show, handleClose, handleShowLogin }) {
       setMessageType('');
 
       try {
-        const response = await axios.post('/register', {
+        await axios.post('/register', {
           name,
           email,
           password,

@@ -88,7 +88,7 @@ export default function LoginModal({ show, handleClose, handleShowRegister, hand
   
       } catch (error) {
         if (error.response && error.response.data) {
-          setLoginError('O login falhou. Verifique suas credenciais e tente novamente.');
+          setLoginError('O login falhou. Verifique as suas credenciais e tente novamente.');
         } else {
           setLoginError('Ocorreu um erro ao tentar fazer login. Tente novamente mais tarde.');
         }
