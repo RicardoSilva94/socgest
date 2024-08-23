@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import { FaUser, FaIdCard, FaPhone, FaEnvelope, FaMapMarkerAlt, FaStickyNote, FaUniversalAccess } from 'react-icons/fa';
 
-const EditSocioModal = ({ show, handleClose, handleEditSocio, socio }) => {
+const EditSocioModal = ({ show, handleClose, handleEditSocio, socio, entidadeId }) => {
   const [nome, setNome] = useState('');
   const [nif, setNif] = useState('');
   const [telefone, setTelefone] = useState('');

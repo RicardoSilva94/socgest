@@ -293,6 +293,7 @@ useEffect(() => {
         handleClose={handleCloseEditSocioModal}
         socio={selectedSocio}
         handleEditSocio={handleEditSocio}
+        entidadeId={entidadeId}
       />
       <ViewSocioModal
         show={showViewSocioModal}
