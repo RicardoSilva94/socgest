@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import { FaUser, FaIdCard, FaPhone, FaEnvelope, FaMapMarkerAlt, FaStickyNote, FaUniversalAccess } from 'react-icons/fa';
-import { MdArrowDropDown } from 'react-icons/md'; // Ícone da seta
+import { MdArrowDropDown } from 'react-icons/md'; 
+import { validarNIF } from '../../utils/validacoes';
 
 const AddSocioModal = ({ show, handleClose, handleAddSocio, entidadeId }) => {
   const [nome, setNome] = useState('');
@@ -11,6 +12,17 @@ const AddSocioModal = ({ show, handleClose, handleAddSocio, entidadeId }) => {
   const [morada, setMorada] = useState('');
   const [notas, setNotas] = useState('');
   const [estado, setEstado] = useState('Activo'); // Estado padrão é "Activo"
+  const [nifError, setNifError] = useState('');
+
+  const verificarNIF = (nif) => {
+    if (validarNIF(nif)) {
+      setNifError(''); // Limpar a mensagem de erro se o NIF for válido
+      return true;
+    } else {
+      setNifError('NIF inválido. O NIF deve começar com um dígito de 1 a 9 e ser seguido por 8 dígitos.');
+      return false;
+    }
+  };
 
   const estados = ['Activo', 'Desistiu', 'Faleceu', 'Expulso', 'Suspenso'];
 
@@ -73,10 +85,15 @@ const AddSocioModal = ({ show, handleClose, handleAddSocio, entidadeId }) => {
                   placeholder="NIF"
                   value={nif}
                   onChange={(e) => {
-                    setNif(e.target.value);
-                    console.log('NIF:', e.target.value); // Log para verificar o NIF
+                    const valorNif = e.target.value;
+                    verificarNIF(valorNif); // Validar o NIF ao mudar o valor
+                    setNif(valorNif);
                   }}
+                  isInvalid={!!nifError} // Definir a classe de erro se houver uma mensagem de erro
                 />
+                <Form.Control.Feedback type="invalid">
+                  {nifError} {/* Mostrar a mensagem de erro */}
+                </Form.Control.Feedback>
               </Form.Group>
             </Col>
           </Row>
@@ -146,6 +163,9 @@ const AddSocioModal = ({ show, handleClose, handleAddSocio, entidadeId }) => {
           Cancelar
         </Button>
         <Button variant="primary" onClick={() => {
+          if (!verificarNIF(nif)) {
+            return; // Impedir a submissão se o NIF for inválido
+          }
           const socioData = {
             nome,
             nif,
@@ -155,9 +175,7 @@ const AddSocioModal = ({ show, handleClose, handleAddSocio, entidadeId }) => {
             notas,
             estado
           };
-          console.log('Dados para adicionar sócio:', socioData); // Log para verificar os dados antes de adicionar
           handleAddSocio(socioData);
-          console.log('Dados recebidos:', socioData); // Log para verificar os dados após adicionar
           handleClose();
           resetForm();
         }}>

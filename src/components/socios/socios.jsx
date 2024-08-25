@@ -24,6 +24,7 @@ const Socios = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertVariant, setAlertVariant] = useState('success');
+  
 
   useEffect(() => {
     const fetchEntidadeId = async () => {

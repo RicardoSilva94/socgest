@@ -34,7 +34,8 @@
   }
   
   .btn-custom:hover {
-    background-color: #6f939c; 
+    background-color: #163c66;
+    color: #ffffff; 
   }
   .form-control {
     border-color: #1f4d84;

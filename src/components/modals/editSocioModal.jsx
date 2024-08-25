@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import { FaUser, FaIdCard, FaPhone, FaEnvelope, FaMapMarkerAlt, FaStickyNote, FaUniversalAccess } from 'react-icons/fa';
+import { validarNIF } from '../../utils/validacoes';
 
 const EditSocioModal = ({ show, handleClose, handleEditSocio, socio, entidadeId }) => {
   const [nome, setNome] = useState('');
@@ -10,6 +11,17 @@ const EditSocioModal = ({ show, handleClose, handleEditSocio, socio, entidadeId 
   const [morada, setMorada] = useState('');
   const [notas, setNotas] = useState('');
   const [estado, setEstado] = useState('');
+  const [nifError, setNifError] = useState('');
+
+  const verificarNIF = (nif) => {
+    if (validarNIF(nif)) {
+      setNifError(''); // Limpar a mensagem de erro se o NIF for válido
+      return true;
+    } else {
+      setNifError('NIF inválido. O NIF deve começar com um dígito de 1 a 9 e ser seguido por 8 dígitos.');
+      return false;
+    }
+  };
 
   useEffect(() => {
     if (socio) {
@@ -57,8 +69,16 @@ const EditSocioModal = ({ show, handleClose, handleEditSocio, socio, entidadeId 
                   type="text"
                   placeholder="NIF"
                   value={nif}
-                  onChange={(e) => setNif(e.target.value)}
+                  onChange={(e) => {
+                    const valorNif = e.target.value;
+                    verificarNIF(valorNif); // Validar o NIF ao mudar o valor
+                    setNif(valorNif);
+                  }}
+                  isInvalid={!!nifError} // Definir a classe de erro se houver uma mensagem de erro
                 />
+                <Form.Control.Feedback type="invalid">
+                  {nifError} {/* Mostrar a mensagem de erro */}
+                </Form.Control.Feedback>
               </Form.Group>
             </Col>
             <Col>
@@ -133,6 +153,9 @@ const EditSocioModal = ({ show, handleClose, handleEditSocio, socio, entidadeId 
           Cancelar
         </Button>
         <Button variant="primary" onClick={() => {
+          if (!verificarNIF(nif)) {
+            return; // Impedir a submissão se o NIF for inválido
+          }
           handleEditSocio({
             id: socio.id,
             nome,
