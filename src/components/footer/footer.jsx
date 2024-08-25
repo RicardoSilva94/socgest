@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './footer.css';
 import { IoMdMail, IoMdCall } from 'react-icons/io';
 import emailjs from 'emailjs-com';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 export default function Footer() {
   const [name, setName] = useState('');
@@ -9,6 +10,8 @@ export default function Footer() {
   const [message, setMessage] = useState('');
   const [submissionStatus, setSubmissionStatus] = useState('');
   const [errors, setErrors] = useState({});
+  const [captchaToken, setCaptchaToken] = useState('');
+  const [captchaError, setCaptchaError] = useState('');
 
   const validate = () => {
     const newErrors = {};
@@ -30,33 +33,44 @@ export default function Footer() {
       newErrors.message = 'Mensagem deve ter pelo menos 10 caracteres!';
     }
 
+    if (!captchaToken) {
+      newErrors.captcha = 'Por favor, verifique que você não é um robô.';
+    }
+
     return newErrors;
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // Previne o comportamento padrão do formulário (recarregar a página)
+    e.preventDefault();
 
-    const formErrors = validate(); // Valida os campos do formulário
-    if (Object.keys(formErrors).length > 0) {   //Retorna um array contendo todas as chaves (propriedades) do objeto formErrors.
-      setErrors(formErrors); // Define os erros no estado se houver algum
+    const formErrors = validate();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
       return;
     }
 
-    // Enviar dados para o EmailJS
+    // Enviar dados para o EmailJS junto com o token do reCAPTCHA
     emailjs.send('service_i89ghpt', 'template_fobr9yx', {
       from_name: name,
       from_email: email,
       message,
+      'g-recaptcha-response': captchaToken, // Enviar o token do reCAPTCHA
     }, 'AEn47PtQIehuW4Rd4')
-    .then((result) => {
-      setSubmissionStatus('Mensagem enviada com sucesso!');
-      setName('');
-      setEmail('');
-      setMessage('');
-      setErrors({});
-    }, (error) => {
-      setSubmissionStatus('Ocorreu um erro. Tente novamente.');
-    });
+      .then((result) => {
+        setSubmissionStatus('Mensagem enviada com sucesso!');
+        setName('');
+        setEmail('');
+        setMessage('');
+        setErrors({});
+        setCaptchaToken(''); // Limpa o token do captcha após envio
+      }, (error) => {
+        setSubmissionStatus('Ocorreu um erro. Tente novamente.');
+      });
+  };
+
+  const onCaptchaChange = (token) => {
+    setCaptchaToken(token);
+    setCaptchaError(''); // Limpa a mensagem de erro do captcha quando for resolvido
   };
 
   return (
@@ -108,6 +122,13 @@ export default function Footer() {
               onChange={(e) => setMessage(e.target.value)}
             ></textarea>
             {errors.message && <p className="error-message">{errors.message}</p>}
+          </div>
+          <div className="form-group">
+            <ReCAPTCHA
+              sitekey="6LfwKC8qAAAAAJBx8fCJKLvvvBNk4_2Syntg_1Vt"
+              onChange={onCaptchaChange}
+            />
+            {errors.captcha && <p className="error-message">{errors.captcha}</p>}
           </div>
           <button type="submit" className="submit-button">Enviar</button>
           {submissionStatus && <p className="submission-status">{submissionStatus}</p>}
