@@ -8,10 +8,10 @@ const instance = axios.create({
   },
 });
 
-// Adicione um interceptor para incluir o token em todas as requisições
+// Adiciona um interceptor para incluir o token em todas as requisições
 instance.interceptors.request.use(
   (config) => {
-    // Apenas adicione o token se necessário
+    // Apenas adiciona o token se necessário
     const token = localStorage.getItem('token');
     if (token && config.url !== '/forgot-password') {
       config.headers['Authorization'] = `Bearer ${token}`;

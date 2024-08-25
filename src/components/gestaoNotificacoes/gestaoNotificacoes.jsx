@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Table, Button, Modal, Form, Card, Pagination, Alert } from 'react-bootstrap';
-import axios from '../../api/axios'; // Usando o axios configurado
-import { useUser } from '../../context/UserContext'; // Usando o UserContext
+import axios from '../../api/axios'; 
+import { useUser } from '../../context/UserContext'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './gestaoNotificacoes.css';
 
 const GestaoNotificacoes = () => {
-  const { user } = useUser(); // Obtendo o usuário autenticado
+  const { user } = useUser(); // Obtem o user autenticado
   const [socios, setSocios] = useState([]);
   const [selectedSocios, setSelectedSocios] = useState([]);
   const [showModal, setShowModal] = useState(false);
