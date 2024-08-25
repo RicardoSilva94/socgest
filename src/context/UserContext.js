@@ -7,8 +7,6 @@ export function UserProvider({ children }) {
   const [entidadeId, setEntidadeId] = useState(null);
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('user');
-    console.log('Usuário salvo no localStorage:', savedUser);
-    
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
@@ -28,8 +26,6 @@ export function UserProvider({ children }) {
     setUser(null);
     delete axios.defaults.headers.common['Authorization'];
   };
-
-  console.log('UserProvider user state:', user);
 
   return (
     <UserContext.Provider value={{ user, setUser, entidadeId, setEntidadeId,logout }}>

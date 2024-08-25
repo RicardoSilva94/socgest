@@ -19,7 +19,6 @@ export const handleScrollToTop = (event) => {
 export default function AppHeader() {
   const history = useHistory();
   const { user, setUser, logout } = useUser();
-  console.log('AppHeader user:', user); // Debugging line
 
 
   const handleNavigateHome = (event) => {

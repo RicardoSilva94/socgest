@@ -22,7 +22,7 @@ const Dashboard = () => {
                 <iframe
                   width="800"
                   height="455"
-                  src="https://www.youtube.com/embed/HbMK0pu3O9k?si=rKedj4KjGmk9m0Xc"
+                  src="https://www.youtube.com/embed/yyOXCsu8de4?si=nmgWVwTWhJe9JPcl"
                   title="Tutorial sobre o website"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

@@ -205,7 +205,7 @@ const Entidade = () => {
         {isEditable ? (
           <Form.Control
             type="text"
-            placeholder="Introduza o valor"
+            placeholder="Introduza o valor (Não introduza Simbolos tais como '€', apenas números e ponto para casas decimais)"
             name="valor_quota"
             value={entidadeData.valor_quota}
             onChange={handleChange}
@@ -360,7 +360,7 @@ const Entidade = () => {
                       </Form.Label>
                       <Form.Control
                         type="text"
-                        placeholder="Introduza o valor"
+                        placeholder="Introduza o valor (Sem '€', use pontos p/ casas decimais)"
                         name="valor_quota"
                         value={entidadeData.valor_quota}
                         onChange={handleChange}
