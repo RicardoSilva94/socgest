@@ -9,10 +9,9 @@ import DeleteQuotaModal from '../modals/deleteQuotaModal';
 import ConfirmPaymentModal from '../modals/confirmPaymentModal';
 import 'react-datepicker/dist/react-datepicker.css';
 import axios from '../../api/axios';
-import { useUser } from '../../context/UserContext';
 
-const Quotas = () => {
-  const { user } = useUser();
+
+const Quotas = () => {;
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -29,8 +28,6 @@ const Quotas = () => {
   // Fecha o modal de geração de quota
   const handleCloseGenerateQuotaModal = () => setShowGenerateQuotaModal(false);
 
-  // Abre o modal de geração de quota
-  const handleShowGenerateQuotaModal = () => setShowGenerateQuotaModal(true);
 
   // Faz a requisição para buscar quotas
   const fetchQuotas = async () => {
@@ -189,7 +186,7 @@ const Quotas = () => {
       setAlertVariant('info');
       setShowAlert(true);
 
-      const response = await axios.post('/quotas/emitir', quotaData);
+      await axios.post('/quotas/emitir', quotaData);
       await fetchQuotas(); // Recarrega os dados após a geração
       setAlertMessage('Quota gerada com sucesso!');
       setAlertVariant('success');

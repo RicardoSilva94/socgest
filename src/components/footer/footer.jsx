@@ -11,7 +11,7 @@ export default function Footer() {
   const [submissionStatus, setSubmissionStatus] = useState('');
   const [errors, setErrors] = useState({});
   const [captchaToken, setCaptchaToken] = useState('');
-  const [captchaError, setCaptchaError] = useState('');
+
 
   const validate = () => {
     const newErrors = {};
@@ -70,7 +70,6 @@ export default function Footer() {
 
   const onCaptchaChange = (token) => {
     setCaptchaToken(token);
-    setCaptchaError(''); // Limpa a mensagem de erro do captcha quando for resolvido
   };
 
   return (

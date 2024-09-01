@@ -7,7 +7,7 @@ import axios from '../../api/axios';
 import { useUser } from '../../context/UserContext';
 
 const PerfilUser = () => {
-  const { user, setUser, logout } = useUser();  
+  const { setUser, logout } = useUser();  
   const [username, setUsername] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -46,7 +46,7 @@ const PerfilUser = () => {
   const handleSubmitUsername = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/change-name', { name: username });
+      await axios.post('/change-name', { name: username });
       setSuccessMessage('Nome de utilizador alterado com sucesso!');  
       setErrorMessage('');
       setUser((prevUser) => ({ ...prevUser, name: username }));  // Atualiza o nome do user no contexto
@@ -65,7 +65,7 @@ const PerfilUser = () => {
     }
 
     try {
-      const response = await axios.post('/change-password', {
+      await axios.post('/change-password', {
         current_password: currentPassword,
         new_password: newPassword,
         new_password_confirmation: confirmPassword,
@@ -135,7 +135,7 @@ const PerfilUser = () => {
                 </Form.Group>
 
                 <Form.Group controlId="formNewPassword">
-                  <Form.Label><strong>Nova Password</strong></Form.Label>
+                  <Form.Label>Nova Password</Form.Label>
                   <Form.Control
                     type="password"
                     placeholder="Introduza a sua nova password"
@@ -145,7 +145,7 @@ const PerfilUser = () => {
                 </Form.Group>
 
                 <Form.Group controlId="formConfirmPassword">
-                  <Form.Label><strong>Confirmar Nova Password</strong></Form.Label>
+                  <Form.Label>Confirmar Nova Password</Form.Label>
                   <Form.Control
                     type="password"
                     placeholder="Confirme a sua nova password"
