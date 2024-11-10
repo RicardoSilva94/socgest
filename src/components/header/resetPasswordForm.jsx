@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import axios from '../../api/axios'; 
 import { Alert, Button, Container, Form } from 'react-bootstrap';
-import { useHistory } from 'react-router-dom'; // Importa useHistory
+import { useHistory } from 'react-router-dom'; 
 
 function ResetPasswordForm() {
   const [email, setEmail] = useState('');
@@ -27,7 +27,6 @@ function ResetPasswordForm() {
       params: { email: emailParam }
     })
       .then(response => {
-        // Token válido, você pode usar a resposta se necessário
       })
       .catch(error => {
         // Lidar com token inválido

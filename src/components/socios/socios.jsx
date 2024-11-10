@@ -11,7 +11,6 @@ import axios from '../../api/axios';
 import { useUser } from '../../context/UserContext';
 
 const Socios = () => {
-  console.log("Socios component rendered");
   const { entidadeId, setEntidadeId } = useUser();
   const [searchTerm, setSearchTerm] = useState('');
   const [socios, setSocios] = useState([]);
@@ -145,7 +144,6 @@ const Socios = () => {
         ...socioData,
         entidade_id: entidadeId
       });
-      console.log('Resposta da API:', response.data);
 
       setAlertMessage('Sócio adicionado com sucesso!');
       setAlertVariant('success');

@@ -24,11 +24,6 @@ export default function LoginModal({ show, handleClose, handleShowRegister, hand
     setShowRecoverPasswordModal(true);
   };
 
-  const handleRecoverPassword = (email) => {
-    // Implementar a lógica de recuperação de password aqui
-    console.log('Recuperar senha para o email:', email);
-  };
-
   const validateForm = () => {
     let valid = true;
 
@@ -154,7 +149,6 @@ export default function LoginModal({ show, handleClose, handleShowRegister, hand
       <RecoverPasswordModal
         show={showRecoverPasswordModal}
         handleClose={handleCloseRecoverPasswordModal}
-        handleRecoverPassword={handleRecoverPassword}
       />
     </>
   );
