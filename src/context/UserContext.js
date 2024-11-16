@@ -20,12 +20,21 @@ export function UserProvider({ children }) {
     }
   }, [user]);
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
-    delete axios.defaults.headers.common['Authorization'];
+  const logout = async () => {
+    try {
+      // Chamada ao backend para invalidar o token
+      await axios.post('/logout');
+    } catch (error) {
+      console.error('Erro ao realizar logout no servidor:', error);
+    } finally {
+      // Realiza o logout localmente
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setUser(null);
+      delete axios.defaults.headers.common['Authorization'];
+    }
   };
+  
 
   return (
     <UserContext.Provider value={{ user, setUser, entidadeId, setEntidadeId,logout }}>
