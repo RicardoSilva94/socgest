@@ -8,7 +8,7 @@ Este é o frontend do projeto Socgest, desenvolvido em React.
 - NPM (Node Package Manager)
 - IDE (recomendado: Visual Studio Code)
 
-## Confuguração do Projeto
+## Configuração do Projeto
 
 1. Abra o terminal no diretório do projeto
 2. Execute o comando 'npm install' para instalar todas as dependências necessárias
