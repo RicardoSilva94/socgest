@@ -17,17 +17,8 @@ const Dashboard = () => {
               <div className="info-section">
                 <p>Veja o video abaixo para aprender como utilizar o SocGest da melhor forma. </p>
               </div>
-              {/* Incorporar o vídeo do YouTube */}
               <div className="video-container">
-                <iframe
-                  width="800"
-                  height="455"
-                  src="https://www.youtube.com/embed/yyOXCsu8de4?si=nmgWVwTWhJe9JPcl"
-                  title="Tutorial sobre o website"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
+                <iframe width="800" height="455" src="https://www.youtube.com/embed/WD3DrXHOIe4?si=crdP7GeJq_c3blGR" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
               </div>
             </div>
           </Container>
