@@ -213,15 +213,15 @@ const GestaoNotificacoes = () => {
         </Col>
       </Row>
 
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered size="xl">
         <Modal.Header closeButton>
           <Modal.Title>Confirmar Envio de Notificações</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Tem certeza de que deseja enviar notificações para os seguintes sócios?
+          Tem a certeza de que deseja enviar as seguintes notificações?
           <ul>
             {selectedSocios.map((quota) => (
-              <li key={quota.id}>{quota.socio.nome} ({quota.socio.email})</li>
+              <li key={quota.id}>{quota.socio.nome} ({quota.socio.email}) - {quota.descricao}</li>
             ))}
           </ul>
         </Modal.Body>
