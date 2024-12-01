@@ -27,7 +27,7 @@ function App() {
             <ProtectedRoute path="/entidade" component={GestaoEntidade} />
             <ProtectedRoute path="/perfil" component={Perfil} />
             <ProtectedRoute path="/notificacoes" component={Notificacoes} />
-            <Route path="/analises" component={Analises} />
+            <ProtectedRoute path="/analises" component={Analises} />
             <Route path="/reset-password/:token" component={ResetPasswordForm} />
           </Switch>
         </div>
