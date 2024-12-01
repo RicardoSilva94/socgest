@@ -4,6 +4,7 @@ import Nav from 'react-bootstrap/Nav';
 import { FaUsers, FaCoins, FaUser, FaBell, FaBuilding, FaSignOutAlt } from 'react-icons/fa';
 import { useUser} from '../../context/UserContext';
 import { useHistory } from 'react-router-dom';
+import { FaMagnifyingGlass } from 'react-icons/fa6';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -38,6 +39,9 @@ const Sidebar = () => {
           </Nav.Link>
           <Nav.Link href="/entidade">
             <FaBuilding className="nav-icon" /> Gestão da Entidade
+          </Nav.Link>
+          <Nav.Link href="/analises">
+            <FaMagnifyingGlass className="nav-icon" /> Análises
           </Nav.Link>
         </Nav>
         <Nav className="flex-column profile-section">

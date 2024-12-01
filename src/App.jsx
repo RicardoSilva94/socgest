@@ -12,6 +12,7 @@ import Notificacoes from './pages/notificacoes';
 import { UserProvider } from './context/UserContext';
 import ResetPasswordForm from './components/header/resetPasswordForm';
 import ProtectedRoute from '../src/protectedRoute';
+import Analises from './pages/analises';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
             <ProtectedRoute path="/entidade" component={GestaoEntidade} />
             <ProtectedRoute path="/perfil" component={Perfil} />
             <ProtectedRoute path="/notificacoes" component={Notificacoes} />
+            <Route path="/analises" component={Analises} />
             <Route path="/reset-password/:token" component={ResetPasswordForm} />
           </Switch>
         </div>

@@ -140,6 +140,7 @@ export default function Footer() {
             <li><a href="#home" onClick={() => window.scrollTo(0, 0)}>Home</a></li>
             <li><a href="/socios">Sócios</a></li>
             <li><a href="/quotas">Quotas</a></li>
+            <li><a href="/analises">Análises</a></li>
             <li><a href="#about">Quem Somos</a></li>
           </ul>
         </nav>
