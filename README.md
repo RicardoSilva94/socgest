@@ -27,4 +27,10 @@ Este é o frontend do projeto Socgest, desenvolvido em React.
 <img src="src/assets/images/quota gerar modal.png" alt="Modal de emissão de quotas">
 - Ecrã de Envio de Notificações
 <img src="src/assets/images/notif2.png" alt="Ecrã de envio de notificações">
+- Análises: Estado dos Sócios
+<img src="src/assets/images/socios estado.png" alt="Ecrã de análise do estado dos Sócios">
+- Análises: Estado das Quotas
+<img src="src/assets/images/estado quotas.png" alt="Ecrã de análise do estado das Quotas">
+- Análises: Top 10 Devedores
+<img src="src/assets/images/top 10.png" alt="Ecrã de análise de top 10 devedores">
 
