@@ -1,0 +1,17 @@
+.historico-notificacoes-content {
+    display: flex;
+    margin-top: 66px; 
+  }
+  
+  .main-content {
+    margin-left: 240px; 
+    padding: 20px;
+    width: calc(100% - 240px);
+  }
+  
+  @media (max-width: 768px) {
+    .main-content {
+      margin-left: 0;
+      width: 100%;
+    }
+  }

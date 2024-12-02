@@ -1,0 +1,25 @@
+.custom-card {
+    background-color: #1f4d84; 
+    color: #ffffff; 
+    height: 100px; 
+    padding: 10px; 
+    margin: 1rem auto; 
+    border-radius: 8px; 
+    display: flex; 
+    align-items: center; /* Alinhamento vertical */
+    justify-content: center; /* Alinhamento horizontal */
+  }
+  
+  .custom-card-title {
+    font-size: 1.25rem; 
+    font-weight: bold; 
+  }
+  
+  .custom-card-text {
+    font-size: 1rem; 
+  }
+  
+  .search-bar {
+    width: 60%; 
+  }
+  

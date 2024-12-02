@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Table, Button, Modal, Form, Card, Pagination, Alert } from 'react-bootstrap';
-import axios from '../../api/axios'; 
-import { useUser } from '../../context/UserContext'; 
+import { Container, Row, Col, Table, Button, Modal, Form, Card, Pagination, Alert, Spinner } from 'react-bootstrap';
+import axios from '../../api/axios';
+import { useUser } from '../../context/UserContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './gestaoNotificacoes.css';
+import { FaMagnifyingGlass } from 'react-icons/fa6';
 
 const GestaoNotificacoes = () => {
   const { user } = useUser(); // Obtem o user autenticado
@@ -15,6 +16,7 @@ const GestaoNotificacoes = () => {
   const [itemsPerPage] = useState(10);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Fetch quotas em atraso da API
   useEffect(() => {
@@ -66,7 +68,7 @@ const GestaoNotificacoes = () => {
   // Novo método para enviar notificações
   const handleSendNotification = async () => {
     const quotaIds = selectedSocios.map((quota) => quota.id);
-
+    setIsLoading(true);
     try {
       const response = await axios.post('/notificacoes/send', {
         quota_ids: quotaIds
@@ -87,6 +89,7 @@ const GestaoNotificacoes = () => {
       setShowErrorAlert(true);
       setShowSuccessAlert(false);
     } finally {
+      setIsLoading(false);
       setShowModal(false); // Fechar o modal
     }
   };
@@ -118,7 +121,13 @@ const GestaoNotificacoes = () => {
             </Alert>
           )}
 
-          <div className="d-flex justify-content-end mb-3">
+          <div className="d-flex justify-content-between align-items-center mb-3">
+
+            <a href="/historiconotificacoes" className="btn btn-primary d-flex align-items-center">
+              <FaMagnifyingGlass className="me-2" />
+              Consultar Histórico
+            </a>
+
             <Form.Control
               type="text"
               placeholder="Pesquisar sócios por nome ou email"
@@ -136,10 +145,10 @@ const GestaoNotificacoes = () => {
                 <thead>
                   <tr>
                     <th>
-                      <Form.Check 
-                        type="checkbox" 
-                        checked={selectedSocios.length === filteredSocios.length} 
-                        onChange={handleSelectAll} 
+                      <Form.Check
+                        type="checkbox"
+                        checked={selectedSocios.length === filteredSocios.length}
+                        onChange={handleSelectAll}
                       />
                     </th>
                     <th>Nome</th>
@@ -173,8 +182,8 @@ const GestaoNotificacoes = () => {
 
               <div className="d-flex justify-content-center my-3">
                 <Pagination>
-                  <Pagination.Prev 
-                    onClick={() => handlePageChange(currentPage - 1)} 
+                  <Pagination.Prev
+                    onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
                   >
                     Anterior
@@ -188,8 +197,8 @@ const GestaoNotificacoes = () => {
                       {index + 1}
                     </Pagination.Item>
                   ))}
-                  <Pagination.Next 
-                    onClick={() => handlePageChange(currentPage + 1)} 
+                  <Pagination.Next
+                    onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
                   >
                     Próximo
@@ -200,10 +209,10 @@ const GestaoNotificacoes = () => {
               <div className="text-center">
                 <Button
                   variant="primary"
-                  disabled={selectedSocios.length === 0}
+                  disabled={selectedSocios.length === 0 || isLoading}
                   onClick={() => setShowModal(true)}
                 >
-                  Enviar Notificações
+                  {isLoading ? <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" /> : 'Enviar Notificações'}
                 </Button>
               </div>
             </>
@@ -229,8 +238,15 @@ const GestaoNotificacoes = () => {
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Cancelar
           </Button>
-          <Button variant="primary" onClick={handleSendNotification}>
-            Enviar
+          <Button variant="primary" onClick={handleSendNotification} disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" className="me-2" />
+                Enviando...
+              </>
+            ) : (
+              'Enviar'
+            )}
           </Button>
         </Modal.Footer>
       </Modal>
