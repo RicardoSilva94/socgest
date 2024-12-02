@@ -109,7 +109,7 @@ export default function AppHeader() {
                     <span className="fw-bold">Bem-vindo, {user.name}!</span>
                   </div>
                   <Button 
-                    variant="outline-danger" 
+                    variant="outline-primary" 
                     onClick={logout} 
                   >
                     Sair

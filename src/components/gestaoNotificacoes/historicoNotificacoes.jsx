@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Table, Card, Pagination, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Table, Card, Pagination, Alert, Form } from 'react-bootstrap';
 import axios from '../../api/axios';
 import { useUser } from '../../context/UserContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -11,7 +11,7 @@ const HistoricoNotificacoes = () => {
     const [itemsPerPage] = useState(10);
     const [notificacoes, setNotificacoes] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         const fetchNotificacoes = async () => {
@@ -29,13 +29,18 @@ const HistoricoNotificacoes = () => {
         fetchNotificacoes();
     }, [user]);
 
-  
+    // Filtrar notificações pelo termo de pesquisa
+    const filteredNotificacoes = notificacoes.filter((notificacao) =>
+        notificacao.socio.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        notificacao.socio.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentNotificacoes = notificacoes.slice(indexOfFirstItem, indexOfLastItem);
-    const totalPages = Math.ceil(notificacoes.length / itemsPerPage);
+    const currentNotificacoes = filteredNotificacoes.slice(indexOfFirstItem, indexOfLastItem);
 
-  
+    const totalPages = Math.ceil(filteredNotificacoes.length / itemsPerPage);
+
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
@@ -53,11 +58,22 @@ const HistoricoNotificacoes = () => {
                         </Card.Body>
                     </Card>
 
+                    <div className="d-flex justify-content-end mb-3">
+                        <Form.Control
+                            type="text"
+                            placeholder="Pesquisar sócios por nome ou e-mail..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="search-bar"
+                            style={{ width: '30%' }}
+                        />
+                    </div>
+
                     {isLoading ? (
                         <Alert variant="info" className="mt-4">
                             A carregar as notificações...
                         </Alert>
-                    ) : notificacoes.length > 0 ? (
+                    ) : filteredNotificacoes.length > 0 ? (
                         <>
                             <Table striped bordered hover>
                                 <thead>
@@ -68,6 +84,7 @@ const HistoricoNotificacoes = () => {
                                         <th>Status Notif.</th>
                                         <th>Data de Envio</th>
                                         <th>Sócio</th>
+                                        <th>E-mail</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -79,10 +96,12 @@ const HistoricoNotificacoes = () => {
                                             <td>{notificacao.estado}</td>
                                             <td>{notificacao.data_envio}</td>
                                             <td>{notificacao.socio.nome}</td>
+                                            <td>{notificacao.socio.email}</td>
                                         </tr>
                                     ))}
                                 </tbody>
                             </Table>
+
                             <Pagination className="justify-content-center">
                                 <Pagination.Prev
                                     onClick={() => handlePageChange(currentPage - 1)}
