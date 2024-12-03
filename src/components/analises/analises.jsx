@@ -53,8 +53,10 @@ const Analises = () => {
                 xAxis: { categories: estados, title: { text: null } },
                 yAxis: {
                     min: 0,
-                    title: { text: "Quotas", align: "high" },
                     labels: { overflow: "justify" },
+                },
+                tooltip: {
+                    pointFormat: "<b>{point.y} sócios</b>", 
                 },
                 series: [{ name: "Sócios", data: counts }],
             });
