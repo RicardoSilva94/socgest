@@ -70,17 +70,17 @@ const Socios = () => {
         Cell: ({ row }) => (
           <div className="action-buttons">
             <OverlayTrigger overlay={<Tooltip id={`tooltip-view`}>Mais Informação</Tooltip>}>
-              <Button variant="success" size="sm" className="mr-2" onClick={() => handleShowViewSocioModal(row.original)}>
+              <Button variant="outline-success" size="sm" className="mr-2" onClick={() => handleShowViewSocioModal(row.original)}>
                 <FaEye />
               </Button>
             </OverlayTrigger>
             <OverlayTrigger overlay={<Tooltip id={`tooltip-edit`}>Editar</Tooltip>}>
-              <Button variant="info" size="sm" className="mr-2" onClick={() => handleShowEditSocioModal(row.original)}>
+              <Button variant="outline-info" size="sm" className="mr-2" onClick={() => handleShowEditSocioModal(row.original)}>
                 <FaEdit />
               </Button>
             </OverlayTrigger>
             <OverlayTrigger overlay={<Tooltip id={`tooltip-delete`}>Eliminar</Tooltip>}>
-              <Button variant="danger" size="sm" onClick={() => handleShowDeleteModal(row.original.id)}>
+              <Button variant="outline-dark" size="sm" onClick={() => handleShowDeleteModal(row.original.id)}>
                 <FaTrash />
               </Button>
             </OverlayTrigger>

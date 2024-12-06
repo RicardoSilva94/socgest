@@ -123,12 +123,12 @@ const Quotas = () => {;
         Cell: ({ row }) => (
           <div className="action-buttons">
             <OverlayTrigger overlay={<Tooltip id={`tooltip-edit`}>Marcar como Pago</Tooltip>}>
-              <Button variant="success" size="sm" className="mr-2" onClick={() => handleShowConfirmPaymentModal(row.original.id)}>
+              <Button variant="outline-success" size="sm" className="mr-2" onClick={() => handleShowConfirmPaymentModal(row.original.id)}>
                 <FaCheck />
               </Button>
             </OverlayTrigger>
             <OverlayTrigger overlay={<Tooltip id={`tooltip-delete`}>Eliminar</Tooltip>}>
-              <Button variant="danger" size="sm" onClick={() => handleShowDeleteModal(row.original.id)}>
+              <Button variant="outline-dark" size="sm" onClick={() => handleShowDeleteModal(row.original.id)}>
                 <FaTrash />
               </Button>
             </OverlayTrigger>
