@@ -64,7 +64,7 @@ const RecoverPasswordModal = ({ show, handleClose }) => {
             </Form.Control.Feedback>
           </Form.Group>
           <Button type="submit" className='mt-4' style={{ backgroundColor: '#1f4d84', color: 'white' }} disabled={loading}>
-            {loading ? 'Enviando...' : 'Enviar'}
+          {loading ? <span>Aguarde... <div className="spinner-border spinner-border-sm"></div></span> : 'Enviar'}
           </Button>
         </Form>
       </Modal.Body>

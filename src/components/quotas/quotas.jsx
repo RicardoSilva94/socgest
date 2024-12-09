@@ -258,7 +258,7 @@ const Quotas = () => {
           </Button>
         </div>
         <div className="d-flex align-items-center">
-          <label className="mr-2">Pesquisar:</label>
+          <label className="mr-2 me-2">Pesquisar:</label>
           <div className="input-group">
             <input
               type="text"

@@ -156,9 +156,9 @@ export default function RegisterModal({ show, handleClose, handleShowLogin }) {
             </Form.Control.Feedback>
           </Form.Group>
 
-          <Button variant="primary" type="submit" className="mt-3 custom-button" disabled={loading}>
-            {loading ? 'Aguarde...' : 'Registar'}
-          </Button>
+          <Button variant="primary" type="submit" className="mt-3 custom-button w-100" disabled={loading}> 
+              {loading ? <span>Aguarde... <div className="spinner-border spinner-border-sm"></div></span> : 'Registar'}
+            </Button>
         </Form>
       </Modal.Body>
     </Modal>

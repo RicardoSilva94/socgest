@@ -3,6 +3,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import axios from '../../api/axios'; 
 import { Alert, Button, Container, Form } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom'; 
+import './resetPasswordForm.css';
 
 function ResetPasswordForm() {
   const [email, setEmail] = useState('');
@@ -14,6 +15,21 @@ function ResetPasswordForm() {
   const { token: routeToken } = useParams();
   const location = useLocation();
   const history = useHistory(); // Usa useHistory para redirecionamento
+  const [loading, setLoading] = useState(false);
+
+  const validateForm = () => {
+    let valid = true;
+    if (password !== passwordConfirmation) {
+      setError('As senhas não coincidem.');
+      valid = false;
+    } else if (password.length < 8) { // Exemplo de validação
+      setError('A senha deve ter pelo menos 8 caracteres.');
+      valid = false;
+    } else {
+      setError('');
+    }
+    return valid;
+  };
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -36,6 +52,7 @@ function ResetPasswordForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (validateForm()) {
     try {
       await axios.post('/reset-password', {
         token,
@@ -51,10 +68,12 @@ function ResetPasswordForm() {
       console.error('Erro ao redefinir a senha:', error);
       setError('Erro ao redefinir a senha. Verifique os detalhes e tente novamente.');
     }
+  }
   };
 
   return (
     <Container className="mt-5">
+      <div className="reset-password-form">
       <h2>Redefinir Senha</h2>
       <Form onSubmit={handleSubmit}>
         {message && <Alert variant="success">{message}</Alert>}
@@ -80,7 +99,11 @@ function ResetPasswordForm() {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Nova senha"
             required
+            isInvalid={password.length < 8} 
           />
+          <Form.Control.Feedback type="invalid">
+            A senha deve ter pelo menos 8 caracteres.
+          </Form.Control.Feedback>
         </Form.Group>
 
         <Form.Group className="mb-3">
@@ -91,13 +114,18 @@ function ResetPasswordForm() {
             onChange={(e) => setPasswordConfirmation(e.target.value)}
             placeholder="Confirme a nova senha"
             required
+            isInvalid={password !== passwordConfirmation}
           />
+          <Form.Control.Feedback type="invalid">
+                As senhas não coincidem.
+              </Form.Control.Feedback>
         </Form.Group>
 
-        <Button variant="primary" type="submit">
-          Redefinir Senha
-        </Button>
+        <Button variant="primary" type="submit" disabled={loading}>
+              {loading ? 'Redefinindo...' : 'Redefinir Senha'}
+            </Button>
       </Form>
+      </div>
     </Container>
   );
 }

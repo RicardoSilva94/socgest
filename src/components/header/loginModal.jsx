@@ -134,8 +134,8 @@ export default function LoginModal({ show, handleClose, handleShowRegister, hand
               </Form.Control.Feedback>
             </Form.Group>
 
-            <Button variant="primary" type="submit" className="mt-3 custom-button" disabled={loading}>
-              {loading ? 'Aguarde...' : 'Login'}
+            <Button variant="primary" type="submit" className="mt-3 custom-button w-100" disabled={loading}> 
+              {loading ? <span>Aguarde... <div className="spinner-border spinner-border-sm"></div></span> : 'Login'}
             </Button>
             <p className="mt-3">
               Não tem uma conta? <span onClick={handleShowRegister} style={{ color: '#1f4d84', cursor: 'pointer' }}>Registar</span>
