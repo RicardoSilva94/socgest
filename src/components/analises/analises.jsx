@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../api/axios";
 import { useUser } from "../../context/UserContext";
-import { Container, Card, Tab, Tabs, Table, Form, Alert, Pagination } from "react-bootstrap";
+import { Container, Card, Tab, Tabs, Table, Form, Alert, Pagination, Button } from "react-bootstrap";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import "./analises.css";
 import { FaCheckCircle, FaTimes } from "react-icons/fa";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 const Analises = () => {
     const [socios, setSocios] = useState([]);
@@ -14,16 +16,54 @@ const Analises = () => {
     const [filteredQuotas, setFilteredQuotas] = useState([]);
     const [activeTab, setActiveTab] = useState("estado");
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(10);
     const { user } = useUser();
     const [selectedMensalYear, setSelectedMensalYear] = useState(new Date().getFullYear());
 
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [activeTab, selectedMensalYear, selectedYear]);
+    // Função para exportar uma tabela para PDF
+    const exportTableToPDF = (tableId, title) => {
+        try {
+            const doc = new jsPDF();
 
+            doc.setFontSize(18);
+            doc.text(title, 14, 20);
 
+            const table = document.getElementById(tableId);
+
+            if (!table) {
+                console.error(`Tabela com ID '${tableId}' não encontrada.`);
+                return;
+            }
+
+            const rows = [];
+            const headers = [];
+
+            const thead = table.querySelector("thead tr");
+            if (thead) {
+                thead.querySelectorAll("th").forEach((th) => headers.push(th.textContent));
+            }
+
+            table.querySelectorAll("tbody tr").forEach((row) => {
+                const cells = [];
+                row.querySelectorAll("td").forEach((cell) => cells.push(cell.textContent));
+                rows.push(cells);
+            });
+
+            doc.autoTable({
+                head: [headers],
+                body: rows,
+                startY: 30,
+                styles: {
+                    fontSize: 8,
+                },
+            });
+
+            doc.save(`${title.replace(/\s+/g, "_")}.pdf`);
+        } catch (error) {
+            console.error("Erro ao exportar tabela para PDF:", error);
+        }
+    };
+
+    // Função para agrupar quotas por sócio
     const GroupBySocio = (quotas) => {
         return quotas
             .filter((quota) => quota.tipo === "Mensal")
@@ -36,23 +76,9 @@ const Analises = () => {
             }, {});
     };
 
-    console.log("Quotas agrupadas por sócio:", GroupBySocio(quotas));
+    const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",];
 
-    const meses = [
-        "Janeiro",
-        "Fevereiro",
-        "Março",
-        "Abril",
-        "Maio",
-        "Junho",
-        "Julho",
-        "Agosto",
-        "Setembro",
-        "Outubro",
-        "Novembro",
-        "Dezembro",
-    ];
-
+    // Função para obter quotas mensais por sócio
     const getQuotasMensaisPorSocio = () => {
         const sociosQuotas = GroupBySocio(
             quotas.filter((quota) =>
@@ -107,6 +133,7 @@ const Analises = () => {
         fetchQuotas();
     }, []);
 
+    // Filtra as quotas por ano selecionado
     useEffect(() => {
         const quotasFiltradas = quotas.filter((quota) => quota.periodo.startsWith(selectedYear.toString()));
         setFilteredQuotas(quotasFiltradas);
@@ -273,10 +300,12 @@ const Analises = () => {
                     )}
                 </Tab>
                 <Tab eventKey="anual" title="Quotas Anuais">
-                    <div className="mb-3">
+                    <div className="mb-3 d-flex justify-content-between align-items-center">
+                        {/* Seletor de Ano */}
                         <Form.Select
                             value={selectedYear}
                             onChange={(e) => setSelectedYear(Number(e.target.value))}
+                            style={{ maxWidth: "200px" }}
                         >
                             {[...Array(7)].map((_, index) => {
                                 const year = new Date().getFullYear() + 1 - index;
@@ -287,10 +316,16 @@ const Analises = () => {
                                 );
                             })}
                         </Form.Select>
+                        <button
+                            className="btn btn-primary"
+                            onClick={() => exportTableToPDF("quotas-anuais-table", "Quotas Anuais")}
+                        >
+                            Exportar para PDF
+                        </button>
                     </div>
                     {filteredQuotas.length > 0 ? (
                         <>
-                            <Table striped bordered hover>
+                            <Table striped bordered hover id="quotas-anuais-table">
                                 <thead>
                                     <tr>
                                         <th>Nome do Sócio</th>
@@ -303,7 +338,6 @@ const Analises = () => {
                                 <tbody>
                                     {filteredQuotas
                                         .filter((quota) => quota.tipo === "Anual")
-                                        .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                                         .map((quota) => (
                                             <tr key={quota.id}>
                                                 <td>{quota.socio.nome}</td>
@@ -322,41 +356,18 @@ const Analises = () => {
                                         ))}
                                 </tbody>
                             </Table>
-                            <Pagination className="justify-content-center">
-                                <Pagination.Prev
-                                    onClick={() => setCurrentPage(currentPage - 1)}
-                                    disabled={currentPage === 1}
-                                >
-                                    Anterior
-                                </Pagination.Prev>
-                                {Array.from({ length: Math.ceil(filteredQuotas.length / itemsPerPage) }, (_, index) => (
-                                    <Pagination.Item
-                                        key={index}
-                                        active={index + 1 === currentPage}
-                                        onClick={() => setCurrentPage(index + 1)}
-                                    >
-                                        {index + 1}
-                                    </Pagination.Item>
-                                ))}
-                                <Pagination.Next
-                                    onClick={() => setCurrentPage(currentPage + 1)}
-                                    disabled={currentPage === Math.ceil(filteredQuotas.length / itemsPerPage)}
-                                >
-                                    Próximo
-                                </Pagination.Next>
-                            </Pagination>
                         </>
                     ) : (
-                        <Alert variant="info">
-                            Não há dados relativos ao ano selecionado.
-                        </Alert>
+                        <Alert variant="info">Não há dados relativos ao ano selecionado.</Alert>
                     )}
                 </Tab>
+
                 <Tab eventKey="mensais" title="Quotas Mensais">
-                    <div className="mb-3">
+                    <div className="mb-3 d-flex justify-content-between align-items-center">
                         <Form.Select
                             value={selectedMensalYear}
                             onChange={(e) => setSelectedMensalYear(Number(e.target.value))}
+                            style={{ maxWidth: "200px" }}
                         >
                             {[...Array(6)].map((_, index) => {
                                 const year = new Date().getFullYear() - index;
@@ -367,11 +378,17 @@ const Analises = () => {
                                 );
                             })}
                         </Form.Select>
+                        <button
+                            className="btn btn-primary"
+                            onClick={() => exportTableToPDF("quotas-mensais-table", "Quotas Mensais")}
+                        >
+                            Exportar para PDF
+                        </button>
                     </div>
 
                     {quotasMensaisData.length > 0 ? (
                         <>
-                            <Table striped bordered hover>
+                            <Table striped bordered hover id="quotas-mensais-table">
                                 <thead>
                                     <tr>
                                         <th>Sócio</th>
@@ -382,14 +399,13 @@ const Analises = () => {
                                 </thead>
                                 <tbody>
                                     {quotasMensaisData
-                                        .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                                         .map((row, index) => (
                                             <tr key={index}>
                                                 <td>{row.nome}</td>
                                                 {meses.map((mes) => (
                                                     <td key={mes} className="text-center">
                                                         {row[mes].estado === "Sem quota" ? (
-                                                            <span>Sem quota</span>
+                                                            <span>N/A</span>
                                                         ) : row[mes].pago ? (
                                                             <>
                                                                 <FaCheckCircle color="green" /> Pago
@@ -405,29 +421,6 @@ const Analises = () => {
                                         ))}
                                 </tbody>
                             </Table>
-                            <Pagination className="justify-content-center">
-                                <Pagination.Prev
-                                    onClick={() => setCurrentPage(currentPage - 1)}
-                                    disabled={currentPage === 1}
-                                >
-                                    Anterior
-                                </Pagination.Prev>
-                                {Array.from({ length: Math.ceil(quotasMensaisData.length / itemsPerPage) }, (_, index) => (
-                                    <Pagination.Item
-                                        key={index}
-                                        active={index + 1 === currentPage}
-                                        onClick={() => setCurrentPage(index + 1)}
-                                    >
-                                        {index + 1}
-                                    </Pagination.Item>
-                                ))}
-                                <Pagination.Next
-                                    onClick={() => setCurrentPage(currentPage + 1)}
-                                    disabled={currentPage === Math.ceil(quotasMensaisData.length / itemsPerPage)}
-                                >
-                                    Próximo
-                                </Pagination.Next>
-                            </Pagination>
                         </>
                     ) : (
                         <Alert variant="info">
