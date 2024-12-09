@@ -7,6 +7,7 @@ import './quotas.css';
 import GenerateQuotaModal from '../modals/generateQuotaModal';
 import DeleteQuotaModal from '../modals/deleteQuotaModal';
 import ConfirmPaymentModal from '../modals/confirmPaymentModal';
+import GenerateQuotaIndividualModal from '../modals/generateQuotaIndividualModal';
 import 'react-datepicker/dist/react-datepicker.css';
 import axios from '../../api/axios';
 
@@ -25,9 +26,9 @@ const Quotas = () => {
   const [alertMessage, setAlertMessage] = useState('');
   const [alertVariant, setAlertVariant] = useState('success');
   const [data, setData] = useState([]); // Estado para armazenar os dados das quotas
-
-  // Fecha o modal de geração de quota
   const handleCloseGenerateQuotaModal = () => setShowGenerateQuotaModal(false);
+  const [showGenerateQuotaIndividualModal, setShowGenerateQuotaIndividualModal] = useState(false);
+  const handleCloseGenerateQuotaIndividualModal = () => setShowGenerateQuotaIndividualModal(false);
 
 
   // Faz a requisição para buscar quotas
@@ -201,6 +202,26 @@ const Quotas = () => {
     }
   };
 
+  const handleGenerateQuotaIndividual = async (quotaData) => {
+    try {
+      setAlertMessage('Gerando nova quota...');
+      setAlertVariant('info');
+      setShowAlert(true);
+
+      await axios.post('/individual', quotaData);
+      await fetchQuotas();
+      setAlertMessage('Quota gerada com sucesso!');
+      setAlertVariant('success');
+    } catch (error) {
+      console.error('Erro ao gerar a quota:', error);
+      setAlertMessage('Erro ao gerar a quota. Tente novamente.');
+      setAlertVariant('danger');
+    } finally {
+      handleCloseGenerateQuotaIndividualModal();
+      setTimeout(() => setShowAlert(false), 3000);
+    }
+  };
+
   const handleShowConfirmPaymentModal = (id) => {
     setSelectedQuotaId(id);
     setShowConfirmPaymentModal(true);
@@ -210,7 +231,7 @@ const Quotas = () => {
 
   const handleConfirmPayment = async (id) => {
     try {
-      const response = await axios.post(`/quotas/${id}`);
+      const response = await axios.put(`/quotas/${id}`);
       await fetchQuotas(); // Recarrega os dados após a confirmação do pagamento
       setAlertMessage(response.data.message);
       setAlertVariant('success');
@@ -228,9 +249,14 @@ const Quotas = () => {
     <div>
       {showAlert && <Alert variant={alertVariant}>{alertMessage}</Alert>}
       <div className="d-flex justify-content-between align-items-center mb-2 mt-1">
-        <Button variant="primary" onClick={() => setShowGenerateQuotaModal(true)}>
-          <FaPlus className="mr-2" /> Gerar Quota
-        </Button>
+        <div className="d-flex align-items-center" style={{ gap: '4px' }}>
+          <Button variant="primary" onClick={() => setShowGenerateQuotaModal(true)} className="mr-2">
+            <FaPlus className="mr-2" /> Gerar Quota
+          </Button>
+          <Button variant="secondary" onClick={() => setShowGenerateQuotaIndividualModal(true)} className="mr-2">
+          <FaPlus className="mr-2" /> Gerar Quota Individual
+          </Button>
+        </div>
         <div className="d-flex align-items-center">
           <label className="mr-2">Pesquisar:</label>
           <div className="input-group">
@@ -244,6 +270,7 @@ const Quotas = () => {
           </div>
         </div>
       </div>
+
       <Table {...getTableProps()} striped bordered hover>
         <thead>
           {headerGroups.map(headerGroup => (
@@ -291,6 +318,11 @@ const Quotas = () => {
         show={showGenerateQuotaModal}
         handleClose={handleCloseGenerateQuotaModal}
         handleGenerateQuota={handleGenerateQuota}
+      />
+      <GenerateQuotaIndividualModal
+        show={showGenerateQuotaIndividualModal}
+        handleClose={handleCloseGenerateQuotaIndividualModal}
+        handleGenerateQuota={handleGenerateQuotaIndividual}
       />
       <DeleteQuotaModal
         show={showDeleteModal}

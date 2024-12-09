@@ -374,7 +374,7 @@ const Analises = () => {
                             <Table striped bordered hover>
                                 <thead>
                                     <tr>
-                                        <th>Nome do Sócio</th>
+                                        <th>Sócio</th>
                                         {meses.map((mes) => (
                                             <th key={mes}>{mes}</th>
                                         ))}
