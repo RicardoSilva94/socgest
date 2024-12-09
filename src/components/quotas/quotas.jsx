@@ -11,7 +11,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import axios from '../../api/axios';
 
 
-const Quotas = () => {;
+const Quotas = () => {
+  ;
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -267,29 +268,29 @@ const Quotas = () => {;
         </tbody>
       </Table>
       <div className="pagination-controls d-flex justify-content-center mt-3">
-  <Button 
-    className="me-1" 
-    onClick={() => previousPage()} 
-    disabled={!canPreviousPage}
-  >
-    Anterior
-  </Button>
-  <Button 
-    className="ms-1" 
-    onClick={() => nextPage()} 
-    disabled={!canNextPage}
-  >
-    Próximo
-  </Button>
-</div>
+        <Button
+          className="me-1"
+          onClick={() => previousPage()}
+          disabled={!canPreviousPage}
+        >
+          Anterior
+        </Button>
+        <Button
+          className="ms-1"
+          onClick={() => nextPage()}
+          disabled={!canNextPage}
+        >
+          Próximo
+        </Button>
+      </div>
       <div className="results-info mt-3">
         <span>A mostrar {filteredData.length} resultados</span>
         <span> | Página {pageIndex + 1} de {Math.ceil(filteredData.length / pageSize)}</span>
       </div>
-      <GenerateQuotaModal 
-        show={showGenerateQuotaModal} 
-        handleClose={handleCloseGenerateQuotaModal} 
-        handleGenerateQuota={handleGenerateQuota} 
+      <GenerateQuotaModal
+        show={showGenerateQuotaModal}
+        handleClose={handleCloseGenerateQuotaModal}
+        handleGenerateQuota={handleGenerateQuota}
       />
       <DeleteQuotaModal
         show={showDeleteModal}

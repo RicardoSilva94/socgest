@@ -1,18 +1,85 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../api/axios";
 import { useUser } from "../../context/UserContext";
-import { Container, Card, Tab, Tabs } from "react-bootstrap";
+import { Container, Card, Tab, Tabs, Table, Form, Alert, Pagination } from "react-bootstrap";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import "./analises.css";
+import { FaCheckCircle, FaTimes } from "react-icons/fa";
 
 const Analises = () => {
     const [socios, setSocios] = useState([]);
     const [quotas, setQuotas] = useState([]);
     const [chartOptions, setChartOptions] = useState({});
+    const [filteredQuotas, setFilteredQuotas] = useState([]);
     const [activeTab, setActiveTab] = useState("estado");
-
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(10);
     const { user } = useUser();
+    const [selectedMensalYear, setSelectedMensalYear] = useState(new Date().getFullYear());
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [activeTab, selectedMensalYear, selectedYear]);
+
+
+    const GroupBySocio = (quotas) => {
+        return quotas
+            .filter((quota) => quota.tipo === "Mensal")
+            .reduce((acc, quota) => {
+                if (!acc[quota.socio_id]) {
+                    acc[quota.socio_id] = { nome: quota.socio.nome, quotas: [] };
+                }
+                acc[quota.socio_id].quotas.push(quota);
+                return acc;
+            }, {});
+    };
+
+    console.log("Quotas agrupadas por sócio:", GroupBySocio(quotas));
+
+    const meses = [
+        "Janeiro",
+        "Fevereiro",
+        "Março",
+        "Abril",
+        "Maio",
+        "Junho",
+        "Julho",
+        "Agosto",
+        "Setembro",
+        "Outubro",
+        "Novembro",
+        "Dezembro",
+    ];
+
+    const getQuotasMensaisPorSocio = () => {
+        const sociosQuotas = GroupBySocio(
+            quotas.filter((quota) =>
+                quota.periodo.toLowerCase().includes(selectedMensalYear.toString())
+            )
+        );
+
+        return Object.keys(sociosQuotas).map((socioId) => {
+            const socioData = sociosQuotas[socioId];
+            const row = {
+                nome: socioData.nome,
+            };
+
+            meses.forEach((mes) => {
+                const quotaDoMes = socioData.quotas.find((quota) =>
+                    quota.periodo.toLowerCase().includes(mes.toLowerCase())
+                );
+                row[mes] = quotaDoMes
+                    ? { estado: quotaDoMes.estado, pago: quotaDoMes.estado.toLowerCase() === "pago" }
+                    : { estado: "Sem quota", pago: false };
+            });
+
+            return row;
+        });
+    };
+
+    const quotasMensaisData = getQuotasMensaisPorSocio();
 
     useEffect(() => {
         const fetchSocios = async () => {
@@ -41,6 +108,11 @@ const Analises = () => {
     }, []);
 
     useEffect(() => {
+        const quotasFiltradas = quotas.filter((quota) => quota.periodo.startsWith(selectedYear.toString()));
+        setFilteredQuotas(quotasFiltradas);
+    }, [quotas, selectedYear]);
+
+    useEffect(() => {
         if (activeTab === "estado" && socios.length > 0) {
             const estados = ["Activo", "Desistiu", "Faleceu", "Expulso", "Suspenso"];
             const counts = estados.map((estado) =>
@@ -56,7 +128,7 @@ const Analises = () => {
                     labels: { overflow: "justify" },
                 },
                 tooltip: {
-                    pointFormat: "<b>{point.y} sócios</b>", 
+                    pointFormat: "<b>{point.y} sócios</b>",
                 },
                 series: [{ name: "Sócios", data: counts }],
             });
@@ -129,7 +201,7 @@ const Analises = () => {
 
             const sociosDevedores = Object.values(totaisPorSocio)
                 .sort((a, b) => b.totalNaoPago - a.totalNaoPago)
-                .slice(0, 10); 
+                .slice(0, 10);
 
             const labels = sociosDevedores.map((socio) => socio.nome);
             const data = sociosDevedores.map((socio) => socio.totalNaoPago);
@@ -158,7 +230,7 @@ const Analises = () => {
                     },
                 },
                 tooltip: {
-                    pointFormat: "{series.name}: {point.y}€</b>", 
+                    pointFormat: "{series.name}: {point.y}€</b>",
                 },
                 series: [
                     {
@@ -200,7 +272,169 @@ const Analises = () => {
                         <HighchartsReact highcharts={Highcharts} options={chartOptions} />
                     )}
                 </Tab>
+                <Tab eventKey="anual" title="Quotas Anuais">
+                    <div className="mb-3">
+                        <Form.Select
+                            value={selectedYear}
+                            onChange={(e) => setSelectedYear(Number(e.target.value))}
+                        >
+                            {[...Array(7)].map((_, index) => {
+                                const year = new Date().getFullYear() + 1 - index;
+                                return (
+                                    <option key={year} value={year}>
+                                        {year}
+                                    </option>
+                                );
+                            })}
+                        </Form.Select>
+                    </div>
+                    {filteredQuotas.length > 0 ? (
+                        <>
+                            <Table striped bordered hover>
+                                <thead>
+                                    <tr>
+                                        <th>Nome do Sócio</th>
+                                        <th>Descrição</th>
+                                        <th>Valor</th>
+                                        <th>Estado</th>
+                                        <th>Período</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredQuotas
+                                        .filter((quota) => quota.tipo === "Anual")
+                                        .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                                        .map((quota) => (
+                                            <tr key={quota.id}>
+                                                <td>{quota.socio.nome}</td>
+                                                <td>{quota.descricao}</td>
+                                                <td>{quota.valor} €</td>
+                                                <td>
+                                                    {quota.estado === "Pago" ? (
+                                                        <FaCheckCircle className="text-success me-1" />
+                                                    ) : (
+                                                        <FaTimes className="text-danger me-1" />
+                                                    )}
+                                                    <span>{quota.estado}</span>
+                                                </td>
+                                                <td>{quota.periodo}</td>
+                                            </tr>
+                                        ))}
+                                </tbody>
+                            </Table>
+                            <Pagination className="justify-content-center">
+                                <Pagination.Prev
+                                    onClick={() => setCurrentPage(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                >
+                                    Anterior
+                                </Pagination.Prev>
+                                {Array.from({ length: Math.ceil(filteredQuotas.length / itemsPerPage) }, (_, index) => (
+                                    <Pagination.Item
+                                        key={index}
+                                        active={index + 1 === currentPage}
+                                        onClick={() => setCurrentPage(index + 1)}
+                                    >
+                                        {index + 1}
+                                    </Pagination.Item>
+                                ))}
+                                <Pagination.Next
+                                    onClick={() => setCurrentPage(currentPage + 1)}
+                                    disabled={currentPage === Math.ceil(filteredQuotas.length / itemsPerPage)}
+                                >
+                                    Próximo
+                                </Pagination.Next>
+                            </Pagination>
+                        </>
+                    ) : (
+                        <Alert variant="info">
+                            Não há dados relativos ao ano selecionado.
+                        </Alert>
+                    )}
+                </Tab>
+                <Tab eventKey="mensais" title="Quotas Mensais">
+                    <div className="mb-3">
+                        <Form.Select
+                            value={selectedMensalYear}
+                            onChange={(e) => setSelectedMensalYear(Number(e.target.value))}
+                        >
+                            {[...Array(6)].map((_, index) => {
+                                const year = new Date().getFullYear() - index;
+                                return (
+                                    <option key={year} value={year}>
+                                        {year}
+                                    </option>
+                                );
+                            })}
+                        </Form.Select>
+                    </div>
 
+                    {quotasMensaisData.length > 0 ? (
+                        <>
+                            <Table striped bordered hover>
+                                <thead>
+                                    <tr>
+                                        <th>Nome do Sócio</th>
+                                        {meses.map((mes) => (
+                                            <th key={mes}>{mes}</th>
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {quotasMensaisData
+                                        .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                                        .map((row, index) => (
+                                            <tr key={index}>
+                                                <td>{row.nome}</td>
+                                                {meses.map((mes) => (
+                                                    <td key={mes} className="text-center">
+                                                        {row[mes].estado === "Sem quota" ? (
+                                                            <span>Sem quota</span>
+                                                        ) : row[mes].pago ? (
+                                                            <>
+                                                                <FaCheckCircle color="green" /> Pago
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <FaTimes color="red" /> Não Pago
+                                                            </>
+                                                        )}
+                                                    </td>
+                                                ))}
+                                            </tr>
+                                        ))}
+                                </tbody>
+                            </Table>
+                            <Pagination className="justify-content-center">
+                                <Pagination.Prev
+                                    onClick={() => setCurrentPage(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                >
+                                    Anterior
+                                </Pagination.Prev>
+                                {Array.from({ length: Math.ceil(quotasMensaisData.length / itemsPerPage) }, (_, index) => (
+                                    <Pagination.Item
+                                        key={index}
+                                        active={index + 1 === currentPage}
+                                        onClick={() => setCurrentPage(index + 1)}
+                                    >
+                                        {index + 1}
+                                    </Pagination.Item>
+                                ))}
+                                <Pagination.Next
+                                    onClick={() => setCurrentPage(currentPage + 1)}
+                                    disabled={currentPage === Math.ceil(quotasMensaisData.length / itemsPerPage)}
+                                >
+                                    Próximo
+                                </Pagination.Next>
+                            </Pagination>
+                        </>
+                    ) : (
+                        <Alert variant="info">
+                            Não há dados relativos ao ano selecionado.
+                        </Alert>
+                    )}
+                </Tab>
             </Tabs>
         </Container>
     );
