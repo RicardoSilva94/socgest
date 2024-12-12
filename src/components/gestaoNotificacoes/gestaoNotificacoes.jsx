@@ -230,7 +230,7 @@ const GestaoNotificacoes = () => {
           Tem a certeza de que deseja enviar as seguintes notificações?
           <ul>
             {selectedSocios.map((quota) => (
-              <li key={quota.id}>{quota.socio.nome} ({quota.socio.email}) - {quota.descricao}</li>
+              <li key={quota.id}>{quota.socio.nome} ({quota.socio.email}) - {quota.descricao} - {quota.valor}€</li>
             ))}
           </ul>
         </Modal.Body>

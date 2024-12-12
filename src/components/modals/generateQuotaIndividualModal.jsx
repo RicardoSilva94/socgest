@@ -18,7 +18,8 @@ const GenerateQuotaIndividualModal = ({ show, handleClose, handleGenerateQuota }
     periodo: '',
     valor: '',
     descricao: '',
-    data_pagamento: new Date()
+    data_pagamento: new Date(),
+    socio_id: ''
   });
 
   const meses = [
@@ -52,11 +53,10 @@ const GenerateQuotaIndividualModal = ({ show, handleClose, handleGenerateQuota }
         ? new Date(quotaData.data_pagamento)
         : quotaData.data_pagamento;
 
-    const formattedQuotaData = {
-      ...quotaData,
-      socio_id: quotaData.socio,
-      data_pagamento: dataPagamento.toISOString().split('T')[0]
-    };
+        const formattedQuotaData = {
+          ...quotaData,
+          data_pagamento: dataPagamento.toISOString().split('T')[0]
+        };
 
     handleGenerateQuota(formattedQuotaData);
     console.log('Quota gerada:', formattedQuotaData);
@@ -88,10 +88,10 @@ const GenerateQuotaIndividualModal = ({ show, handleClose, handleGenerateQuota }
                 <InputGroup.Text>
                 <FaPerson />
                 </InputGroup.Text>
-                <Form.Control as="select" name="socio_id" value={quotaData.socio} onChange={handleChange}>
+                <Form.Control as="select" name="socio_id" value={quotaData.socio_id} onChange={handleChange}>
                 <option value="">Selecione o sócio...</option>
                 {socios.map((socio, index) => (
-                    <option key={index} value={socio.id}>
+                    <option key={socio.id} value={socio.id}>
                     {socio.nome}
                     </option>
                 ))}
