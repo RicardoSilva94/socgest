@@ -141,6 +141,7 @@ const GenerateQuotaIndividualModal = ({ show, handleClose, handleGenerateQuota }
                       {`${mes} ${currentYear}`}
                     </option>
                   ))}
+                  <option value={`Janeiro ${currentYear + 1}`}>{`Janeiro ${currentYear + 1}`}</option>
                 </Form.Control>
               )}
             </InputGroup>

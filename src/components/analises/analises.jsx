@@ -369,6 +369,9 @@ const Analises = () => {
                             onChange={(e) => setSelectedMensalYear(Number(e.target.value))}
                             style={{ maxWidth: "200px" }}
                         >
+                            <option key={new Date().getFullYear() + 1} value={new Date().getFullYear() + 1}>
+                                {new Date().getFullYear() + 1}
+                            </option>
                             {[...Array(6)].map((_, index) => {
                                 const year = new Date().getFullYear() - index;
                                 return (
