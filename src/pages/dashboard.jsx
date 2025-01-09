@@ -7,11 +7,11 @@ import AppHeader from '../components/header/header';
 const Dashboard = () => {
   return (
     <>
-      <AppHeader />
       <div className="dashboard">
+      <AppHeader />
         <Sidebar />
         <div className="main-content">
-          <Container fluid>
+          <Container>
             <div className="content">
               <h2>Bem Vindo ao Dashboard de Gestão da sua Associação</h2>
               <div className="info-section">
