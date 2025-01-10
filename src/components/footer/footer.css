@@ -22,6 +22,10 @@
   align-items: center;
 }
 
+.contact-right {
+  text-align: left;
+}
+
 .contact-item {
   display: flex;
   align-items: center;

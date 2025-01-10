@@ -77,6 +77,7 @@ export default function Footer() {
       <div className="footer-section">
         <h4>Contactos</h4>
         <div className="contact-info">
+          <div className="contact-right">
           <div className="contact-item">
             <IoMdMail className="contact-icon" />
             <p>socgest.socios@gmail.com</p>
@@ -84,6 +85,7 @@ export default function Footer() {
           <div className="contact-item">
             <IoMdCall className="contact-icon" />
             <p>+351 917 736 696</p>
+            </div>
           </div>
         </div>
       </div>

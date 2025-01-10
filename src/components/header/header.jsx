@@ -72,7 +72,6 @@ export default function AppHeader() {
   };
   //Função para lidar com o login do utilizador
   const handleLogin = (userData) => {
-    console.log('Handle login called with:', userData); // Debugging line
     setUser(userData); 
     handleCloseLogin(); // Fecha o modal de login após o login bem-sucedido
   };
@@ -88,7 +87,7 @@ export default function AppHeader() {
               alt="Logo"
               width="120"
               height="45"
-              className="d-inline-block align-top"
+              className="d-none d-md-inline-block align-top"
             />
           </Link>
 
@@ -109,7 +108,6 @@ export default function AppHeader() {
                     <span className="fw-bold">Bem-vindo, {user.name}!</span>
                   </div>
                   <Button 
-                    variant="outline-primary" 
                     onClick={logout} 
                   >
                     Sair
@@ -117,7 +115,6 @@ export default function AppHeader() {
                 </>
               ) : (
                 <Button 
-                  variant="primary" 
                   onClick={handleShowLogin} 
                 >
                   Entrar

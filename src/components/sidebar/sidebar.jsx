@@ -1,7 +1,7 @@
 import React, { useState} from 'react';
 import './sidebar.css';
 import Nav from 'react-bootstrap/Nav';
-import { FaUsers, FaCoins, FaUser, FaBell, FaBuilding, FaSignOutAlt } from 'react-icons/fa';
+import { FaUsers, FaCoins, FaUser, FaBell, FaBuilding, FaSignOutAlt, FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 import { useUser} from '../../context/UserContext';
 import { useHistory } from 'react-router-dom';
 import { FaMagnifyingGlass } from 'react-icons/fa6';
@@ -23,7 +23,7 @@ const Sidebar = () => {
   return (
     <>
       <button className="toggle-button" onClick={toggleSidebar}>
-        ☰
+      {isOpen ? <FaChevronLeft /> : <FaChevronRight />}
       </button>
       <div className={`sidebar ${isOpen ? 'show' : 'hidden'}`}>
         <Nav defaultActiveKey="/dashboard" className="flex-column">
